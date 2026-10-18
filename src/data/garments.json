@@ -2,79 +2,297 @@
   {
     "id": "silk-blouse",
     "layer": "top",
-    "name": { "en": "Aurelia Silk Blouse", "fa": "بلوز ابریشمی اورلیا" },
+    "name": {
+      "en": "Aurelia Silk Blouse",
+      "fa": "بلوز ابریشمی اورلیا"
+    },
     "price": 420,
-    "colors": [{ "name": "Ivory", "hex": "#F5E9D6" }, { "name": "Noir", "hex": "#1a1a1a" }, { "name": "Champagne", "hex": "#D9C29A" }],
+    "colors": [
+      {
+        "name": "Ivory",
+        "hex": "#F5E9D6"
+      },
+      {
+        "name": "Noir",
+        "hex": "#1a1a1a"
+      },
+      {
+        "name": "Champagne",
+        "hex": "#D9C29A"
+      }
+    ],
     "chart": {
-      "XS": { "bust": 84, "waist": 68, "hips": 90 },
-      "S": { "bust": 89, "waist": 73, "hips": 95 },
-      "M": { "bust": 94, "waist": 78, "hips": 100 },
-      "L": { "bust": 100, "waist": 84, "hips": 106 },
-      "XL": { "bust": 106, "waist": 90, "hips": 112 }
-    }
+      "XS": {
+        "bust": 84,
+        "waist": 68,
+        "hips": 90
+      },
+      "S": {
+        "bust": 89,
+        "waist": 73,
+        "hips": 95
+      },
+      "M": {
+        "bust": 94,
+        "waist": 78,
+        "hips": 100
+      },
+      "L": {
+        "bust": 100,
+        "waist": 84,
+        "hips": 106
+      },
+      "XL": {
+        "bust": 106,
+        "waist": 90,
+        "hips": 112
+      }
+    },
+    "shape": "blouse",
+    "tags": [
+      "formal",
+      "work"
+    ]
   },
   {
     "id": "wool-trouser",
     "layer": "bottom",
-    "name": { "en": "Milano Wool Trouser", "fa": "شلوار پشمی میلانو" },
+    "name": {
+      "en": "Milano Wool Trouser",
+      "fa": "شلوار پشمی میلانو"
+    },
     "price": 380,
-    "colors": [{ "name": "Charcoal", "hex": "#3a3a3c" }, { "name": "Camel", "hex": "#B08A5B" }, { "name": "Cream", "hex": "#EDE0C8" }],
+    "colors": [
+      {
+        "name": "Charcoal",
+        "hex": "#3a3a3c"
+      },
+      {
+        "name": "Camel",
+        "hex": "#B08A5B"
+      },
+      {
+        "name": "Cream",
+        "hex": "#EDE0C8"
+      }
+    ],
     "chart": {
-      "XS": { "waist": 64, "hips": 90 },
-      "S": { "waist": 69, "hips": 95 },
-      "M": { "waist": 74, "hips": 100 },
-      "L": { "waist": 80, "hips": 106 },
-      "XL": { "waist": 86, "hips": 112 }
-    }
+      "XS": {
+        "waist": 64,
+        "hips": 90
+      },
+      "S": {
+        "waist": 69,
+        "hips": 95
+      },
+      "M": {
+        "waist": 74,
+        "hips": 100
+      },
+      "L": {
+        "waist": 80,
+        "hips": 106
+      },
+      "XL": {
+        "waist": 86,
+        "hips": 112
+      }
+    },
+    "shape": "trouser",
+    "tags": [
+      "work",
+      "casual"
+    ]
   },
   {
     "id": "cashmere-coat",
     "layer": "outer",
-    "name": { "en": "Regent Cashmere Coat", "fa": "پالتو کشمیر رجنت" },
+    "name": {
+      "en": "Regent Cashmere Coat",
+      "fa": "پالتو کشمیر رجنت"
+    },
     "price": 1650,
-    "colors": [{ "name": "Camel", "hex": "#B08A5B" }, { "name": "Black", "hex": "#151515" }, { "name": "Gold", "hex": "#D4AF37" }],
+    "colors": [
+      {
+        "name": "Camel",
+        "hex": "#B08A5B"
+      },
+      {
+        "name": "Black",
+        "hex": "#151515"
+      },
+      {
+        "name": "Gold",
+        "hex": "#D4AF37"
+      }
+    ],
     "chart": {
-      "XS": { "bust": 92, "waist": 80, "hips": 98 },
-      "S": { "bust": 97, "waist": 85, "hips": 103 },
-      "M": { "bust": 102, "waist": 90, "hips": 108 },
-      "L": { "bust": 108, "waist": 96, "hips": 114 },
-      "XL": { "bust": 114, "waist": 102, "hips": 120 }
-    }
+      "XS": {
+        "bust": 92,
+        "waist": 80,
+        "hips": 98
+      },
+      "S": {
+        "bust": 97,
+        "waist": 85,
+        "hips": 103
+      },
+      "M": {
+        "bust": 102,
+        "waist": 90,
+        "hips": 108
+      },
+      "L": {
+        "bust": 108,
+        "waist": 96,
+        "hips": 114
+      },
+      "XL": {
+        "bust": 114,
+        "waist": 102,
+        "hips": 120
+      }
+    },
+    "shape": "coat",
+    "tags": [
+      "formal",
+      "work",
+      "cold"
+    ]
   },
   {
     "id": "satin-skirt",
     "layer": "bottom",
-    "name": { "en": "Lumière Satin Skirt", "fa": "دامن ساتن لومیر" },
+    "name": {
+      "en": "Lumière Satin Skirt",
+      "fa": "دامن ساتن لومیر"
+    },
     "price": 340,
-    "colors": [{ "name": "Gold", "hex": "#C9A43A" }, { "name": "Wine", "hex": "#5a1f2a" }, { "name": "Noir", "hex": "#1a1a1a" }],
+    "colors": [
+      {
+        "name": "Gold",
+        "hex": "#C9A43A"
+      },
+      {
+        "name": "Wine",
+        "hex": "#5a1f2a"
+      },
+      {
+        "name": "Noir",
+        "hex": "#1a1a1a"
+      }
+    ],
     "chart": {
-      "XS": { "waist": 65, "hips": 92 },
-      "S": { "waist": 70, "hips": 97 },
-      "M": { "waist": 75, "hips": 102 },
-      "L": { "waist": 81, "hips": 108 },
-      "XL": { "waist": 87, "hips": 114 }
-    }
+      "XS": {
+        "waist": 65,
+        "hips": 92
+      },
+      "S": {
+        "waist": 70,
+        "hips": 97
+      },
+      "M": {
+        "waist": 75,
+        "hips": 102
+      },
+      "L": {
+        "waist": 81,
+        "hips": 108
+      },
+      "XL": {
+        "waist": 87,
+        "hips": 114
+      }
+    },
+    "shape": "skirt",
+    "tags": [
+      "formal"
+    ]
   },
   {
     "id": "knit-top",
     "layer": "top",
-    "name": { "en": "Sienna Fine Knit", "fa": "تاپ بافت سیه‌نا" },
+    "name": {
+      "en": "Sienna Fine Knit",
+      "fa": "تاپ بافت سیه‌نا"
+    },
     "price": 290,
-    "colors": [{ "name": "Cream", "hex": "#F5E9D6" }, { "name": "Mocha", "hex": "#6b4f3a" }, { "name": "Sage", "hex": "#8a9a7e" }],
+    "colors": [
+      {
+        "name": "Cream",
+        "hex": "#F5E9D6"
+      },
+      {
+        "name": "Mocha",
+        "hex": "#6b4f3a"
+      },
+      {
+        "name": "Sage",
+        "hex": "#8a9a7e"
+      }
+    ],
     "chart": {
-      "XS": { "bust": 82, "waist": 66 },
-      "S": { "bust": 87, "waist": 71 },
-      "M": { "bust": 92, "waist": 76 },
-      "L": { "bust": 98, "waist": 82 },
-      "XL": { "bust": 104, "waist": 88 }
-    }
+      "XS": {
+        "bust": 82,
+        "waist": 66
+      },
+      "S": {
+        "bust": 87,
+        "waist": 71
+      },
+      "M": {
+        "bust": 92,
+        "waist": 76
+      },
+      "L": {
+        "bust": 98,
+        "waist": 82
+      },
+      "XL": {
+        "bust": 104,
+        "waist": 88
+      }
+    },
+    "shape": "knit",
+    "tags": [
+      "casual",
+      "work"
+    ]
   },
   {
     "id": "leather-pump",
     "layer": "shoes",
-    "name": { "en": "Étoile Leather Pump", "fa": "کفش چرم اتوال" },
+    "name": {
+      "en": "Étoile Leather Pump",
+      "fa": "کفش چرم اتوال"
+    },
     "price": 690,
-    "colors": [{ "name": "Black", "hex": "#111111" }, { "name": "Nude", "hex": "#D8B99A" }, { "name": "Gold", "hex": "#D4AF37" }],
-    "chart": { "XS": {}, "S": {}, "M": {}, "L": {}, "XL": {} }
+    "colors": [
+      {
+        "name": "Black",
+        "hex": "#111111"
+      },
+      {
+        "name": "Nude",
+        "hex": "#D8B99A"
+      },
+      {
+        "name": "Gold",
+        "hex": "#D4AF37"
+      }
+    ],
+    "chart": {
+      "XS": {},
+      "S": {},
+      "M": {},
+      "L": {},
+      "XL": {}
+    },
+    "shape": "pump",
+    "tags": [
+      "formal",
+      "work",
+      "casual"
+    ]
   }
 ]
