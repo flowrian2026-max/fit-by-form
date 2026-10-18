@@ -167,7 +167,7 @@ function FittingRoom() {
             {rec.confidence === null ? <p className="text-sm text-muted-foreground">{t.noFit}</p> : <>
               <div className="flex items-end justify-between">
                 <div><p className="text-xs text-muted-foreground">{t.recommended}</p><p className="font-display text-4xl text-primary">{rec.best.size}</p></div>
-                <div className="text-end"><p className="text-xs text-muted-foreground">{t.confidence}</p><p className="text-2xl">{n(rec.confidence)}٪</p></div>
+                <div className="text-end"><p className="text-xs text-muted-foreground">{t.confidence}</p><p className="text-2xl">{n(rec.confidence)}{lang === "fa" ? "٪" : "%"}</p></div>
               </div>
               <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full bg-primary transition-all duration-500" style={{ width: `${rec.confidence}%` }} /></div>
               <p className="mt-4 mb-2 text-xs text-muted-foreground">{t.size} {size}</p>
