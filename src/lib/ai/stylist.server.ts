@@ -20,7 +20,7 @@ const OutfitSchema = z.object({
 });
 
 export async function runStylist(input: { occasion: string; style: string; budget: number; lang: "en" | "fa"; body: Body }): Promise<StylistResult> {
-  const apiKey = process.env.LOVABLE_API_KEY;
+  const apiKey = process.env["LOVABLE_API_KEY"];
   if (!apiKey) return { ok: false, error: "AI stylist is not configured." };
 
   // Fit is computed here, not by the model, so sizes always respect the fit engine.
