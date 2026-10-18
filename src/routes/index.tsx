@@ -10,13 +10,13 @@ type Layer = "top" | "bottom" | "outer" | "shoes";
 type Garment = { id: string; layer: Layer; name: Record<Lang, string>; price: number; colors: { name: string; hex: string }[]; chart: SizeChart };
 const garments = garmentsData as unknown as Garment[];
 
-const presets: Record<string, Body> = {
+const presets = {
   slim: { height: 168, weight: 52, bust: 80, waist: 63, hips: 86 },
   regular: { height: 165, weight: 62, bust: 89, waist: 72, hips: 95 },
   athletic: { height: 170, weight: 64, bust: 90, waist: 70, hips: 93 },
   curvy: { height: 163, weight: 72, bust: 100, waist: 78, hips: 106 },
   tall: { height: 182, weight: 66, bust: 88, waist: 70, hips: 96 },
-};
+} satisfies Record<string, Body>;
 const outfitIdeas: Record<Layer, [string, number]>[] = [
   { top: ["silk-blouse", 1], bottom: ["satin-skirt", 0], outer: ["cashmere-coat", 1], shoes: ["leather-pump", 2] },
   { top: ["knit-top", 0], bottom: ["wool-trouser", 1], outer: ["cashmere-coat", 0], shoes: ["leather-pump", 0] },
@@ -41,7 +41,7 @@ function FittingRoom() {
   const [lang, setLang] = useState<Lang>("en");
   const t = dict[lang];
   const n = (v: string | number) => (lang === "fa" ? toFaDigits(v) : String(v));
-  const [gid, setGid] = useState(garments[0].id);
+  const [gid, setGid] = useState(garments[0]!.id);
   const g = garments.find((x) => x.id === gid)!;
   const [colorIdx, setColorIdx] = useState(0);
   const [size, setSize] = useState<Size>("M");
@@ -56,11 +56,11 @@ function FittingRoom() {
   const [savedCount, setSavedCount] = useState(0);
 
   useEffect(() => setSavedCount(JSON.parse(localStorage.getItem("looks") || "[]").length), []);
-  useEffect(() => { if (toast) { const id = setTimeout(() => setToast(""), 2000); return () => clearTimeout(id); } }, [toast]);
+  useEffect(() => { if (toast) { const id = setTimeout(() => setToast(""), 2000); return () => clearTimeout(id); } return undefined; }, [toast]);
 
   const rec = useMemo(() => recommend(g.chart, body), [g, body]);
   const current = evaluateSize(g.chart, size, body);
-  const outfit: Outfit = { ...wardrobe, [g.layer]: g.colors[colorIdx].hex };
+  const outfit: Outfit = { ...wardrobe, [g.layer]: g.colors[colorIdx]!.hex };
   const price = lang === "fa" ? `${toFaDigits(g.price.toLocaleString())} یورو` : `€${g.price.toLocaleString()}`;
 
   const pick = (id: string, c = 0) => { const ng = garments.find((x) => x.id === id)!; setWardrobe({ ...outfit }); setGid(id); setColorIdx(c); };
@@ -71,7 +71,7 @@ function FittingRoom() {
   };
   const tryIdea = (idea: Record<Layer, [string, number]>) => {
     const o: Outfit = {};
-    (Object.keys(idea) as Layer[]).forEach((l) => { const [id, c] = idea[l]; const gg = garments.find((x) => x.id === id); if (gg) o[l] = gg.colors[c].hex; });
+    (Object.keys(idea) as Layer[]).forEach((l) => { const [id, c] = idea[l]; const gg = garments.find((x) => x.id === id); if (gg) o[l] = gg.colors[c]!.hex; });
     setWardrobe(o); const [tid, tc] = idea.top; setGid(tid); setColorIdx(tc);
   };
 
@@ -107,7 +107,7 @@ function FittingRoom() {
             <p className="mt-2 text-xl text-primary">{price}</p>
           </div>
           <div>
-            <p className="mb-2 text-xs text-muted-foreground">{t.color} — {g.colors[colorIdx].name}</p>
+            <p className="mb-2 text-xs text-muted-foreground">{t.color} — {g.colors[colorIdx]!.name}</p>
             <div className="flex gap-3">
               {g.colors.map((c, i) => (
                 <button key={c.hex} aria-label={c.name} onClick={() => setColorIdx(i)} style={{ background: c.hex }}
@@ -201,7 +201,7 @@ function FittingRoom() {
           <div className="grid gap-4 sm:grid-cols-3">
             {outfitIdeas.map((idea, i) => {
               const o: Outfit = {};
-              (Object.keys(idea) as Layer[]).forEach((l) => { const gg = garments.find((x) => x.id === idea[l][0]); if (gg) o[l] = gg.colors[idea[l][1]].hex; });
+              (Object.keys(idea) as Layer[]).forEach((l) => { const gg = garments.find((x) => x.id === idea[l][0]); if (gg) o[l] = gg.colors[idea[l][1]]!.hex; });
               return (
                 <div key={i} className="flex items-center gap-4 rounded-2xl bg-card p-4">
                   <div className="h-32 shrink-0"><Mannequin body={body} outfit={o} view="front" /></div>
