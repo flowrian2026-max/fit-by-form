@@ -4,6 +4,7 @@ import { RotateCw, ZoomIn, Columns2, Bookmark, ShoppingBag, Globe } from "lucide
 import garmentsData from "@/data/garments.json";
 import { Mannequin, type View, type Outfit } from "@/components/Mannequin";
 import { recommend, evaluateSize, SIZES, type Body, type Size, type SizeChart, type FitStatus } from "@/lib/fit";
+import { AiStylist } from "@/components/AiStylist";
 import { dict, toFaDigits, type Lang } from "@/lib/i18n";
 
 type Layer = "top" | "bottom" | "outer" | "shoes";
@@ -185,6 +186,13 @@ function FittingRoom() {
       </main>
 
       <section className="mx-auto max-w-7xl space-y-8 px-4 pb-16">
+        <AiStylist body={body} lang={lang} onApply={(pieces) => {
+          const o: Outfit = {};
+          pieces.forEach((p) => { const gg = garments.find((x) => x.id === p.id); if (gg) o[p.layer as Layer] = gg.colors[p.colorIndex]!.hex; });
+          setWardrobe(o);
+          const first = pieces[0]!; setGid(first.id); setColorIdx(first.colorIndex); setSize(first.size as Size);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }} />
         <div>
           <h2 className="mb-3 font-display text-xl">{t.bodyTypes}</h2>
           <div className="flex gap-3 overflow-x-auto pb-2">
