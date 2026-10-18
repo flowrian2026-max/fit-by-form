@@ -21,3 +21,10 @@ describe("fit engine", () => {
     expect(r.best.size).toBe("M");
   });
 });
+
+import { fitConfidence } from "@/lib/fit";
+describe("confidence", () => {
+  it("is 100% when every zone has the ideal 5cm ease", () => expect(fitConfidence([5, 5, 5])).toBe(100));
+  it("drops with distance from ideal ease", () => expect(fitConfidence([10])).toBe(50));
+  it("is 0% when 10cm or more from ideal", () => expect(fitConfidence([-5])).toBe(0));
+});
