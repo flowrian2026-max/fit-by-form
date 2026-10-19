@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
 import garmentsData from "@/data/garments.json";
-import { recommendOutfit, type StylistResult, type StylistPiece } from "@/lib/ai/stylist.functions";
+import { styleOutfit, type StylistResult, type StylistPiece } from "@/lib/stylist";
 import { dict, toFaDigits, type Lang } from "@/lib/i18n";
 import type { Body } from "@/lib/fit";
 
@@ -20,9 +20,9 @@ export function AiStylist({ body, lang, onApply }: { body: Body; lang: Lang; onA
     e.preventDefault();
     if (occasion.trim().length < 2 || loading) return;
     setLoading(true); setRes(null);
-    try { setRes(await recommendOutfit({ data: { occasion, style, budget, lang, body } })); }
-    catch { setRes({ ok: false, error: lang === "fa" ? "خطا رخ داد. دوباره امتحان کنید." : "Something went wrong. Please try again." }); }
-    finally { setLoading(false); }
+    await new Promise((r) => setTimeout(r, 350));
+    setRes(styleOutfit({ occasion, style, budget, lang, body }));
+    setLoading(false);
   };
 
   const field = "w-full rounded-xl border border-input bg-secondary px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary";
@@ -43,8 +43,7 @@ export function AiStylist({ body, lang, onApply }: { body: Body; lang: Lang; onA
         </form>
         <div className="min-h-40 rounded-2xl bg-secondary p-4">
           {loading && <div className="space-y-2">{[0, 1, 2].map((i) => <div key={i} className="h-4 animate-pulse rounded bg-muted" style={{ width: `${90 - i * 20}%` }} />)}</div>}
-          {res && !res.ok && <p className="text-sm text-destructive">{res.error}</p>}
-          {res?.ok && (
+                    {res && (
             <div className="space-y-3 animate-in fade-in">
               <p className="font-display text-lg text-primary">{res.title}</p>
               <p className="text-sm text-muted-foreground">{res.rationale}</p>

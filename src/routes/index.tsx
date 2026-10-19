@@ -1,6 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
-import { RotateCw, ZoomIn, Columns2, Bookmark, ShoppingBag, Globe } from "lucide-react";
+import { createFileRoute, ClientOnly } from "@tanstack/react-router";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { RotateCw, ZoomIn, Columns2, Bookmark, ShoppingBag, Globe, Layers } from "lucide-react";
+import type { LayerSpec, GarmentShape } from "@/components/three/types";
+import type { StageFigure } from "@/components/three/FittingStage";
+
+const FittingStage = lazy(() => import("@/components/three/FittingStage"));
 import garmentsData from "@/data/garments.json";
 import { Mannequin, type View, type Outfit } from "@/components/Mannequin";
 import { recommend, evaluateSize, SIZES, type Body, type Size, type SizeChart, type FitStatus } from "@/lib/fit";
@@ -8,7 +12,7 @@ import { AiStylist } from "@/components/AiStylist";
 import { dict, toFaDigits, type Lang } from "@/lib/i18n";
 
 type Layer = "top" | "bottom" | "outer" | "shoes";
-type Garment = { id: string; layer: Layer; name: Record<Lang, string>; price: number; colors: { name: string; hex: string }[]; chart: SizeChart };
+type Garment = { id: string; layer: Layer; shape: GarmentShape; name: Record<Lang, string>; price: number; colors: { name: string; hex: string }[]; chart: SizeChart };
 const garments = garmentsData as unknown as Garment[];
 
 const presets = {
@@ -36,7 +40,7 @@ export const Route = createFileRoute("/")({
   component: FittingRoom,
 });
 
-const statusCls: Record<FitStatus, string> = { tight: "bg-destructive", perfect: "bg-success", loose: "bg-warning" };
+const statusCls: Record<FitStatus, string> = { tight: "bg-warning", perfect: "bg-success", loose: "bg-info" };
 
 function FittingRoom() {
   const [lang, setLang] = useState<Lang>("en");
@@ -55,6 +59,8 @@ function FittingRoom() {
   const [toast, setToast] = useState("");
   const [wardrobe, setWardrobe] = useState<Outfit>({ top: "#F5E9D6", bottom: "#3a3a3c" });
   const [savedCount, setSavedCount] = useState(0);
+  const [wearIds, setWearIds] = useState<Partial<Record<Layer, string>>>({ top: "silk-blouse", bottom: "wool-trouser" });
+  const [fitMap, setFitMap] = useState(false);
 
   useEffect(() => setSavedCount(JSON.parse(localStorage.getItem("looks") || "[]").length), []);
   useEffect(() => { if (toast) { const id = setTimeout(() => setToast(""), 2000); return () => clearTimeout(id); } return undefined; }, [toast]);
@@ -62,18 +68,31 @@ function FittingRoom() {
   const rec = useMemo(() => recommend(g.chart, body), [g, body]);
   const current = evaluateSize(g.chart, size, body);
   const outfit: Outfit = { ...wardrobe, [g.layer]: g.colors[colorIdx]!.hex };
+  const ids = { ...wearIds, [g.layer]: gid };
+  const layersFor = (currentSize: Size): LayerSpec[] =>
+    (Object.keys(ids) as Layer[]).flatMap((l) => {
+      const gg = garments.find((x) => x.id === ids[l]);
+      const color = outfit[l];
+      if (!gg || !color) return [];
+      const sz = gg.id === gid ? currentSize : recommend(gg.chart, body).best.size;
+      return [{ layer: l, shape: gg.shape, color, measures: gg.chart[sz] }];
+    });
+  const fitOf = (s: Size) => Object.fromEntries(evaluateSize(g.chart, s, body).zones.map((z) => [z.zone, z.status]));
+  const figures: StageFigure[] = (compare ? [rec.best.size, size] : [size]).map((s, i) => ({ key: `${i}`, body, layers: layersFor(s), fitMap, fit: fitOf(s) }));
   const price = lang === "fa" ? `${toFaDigits(g.price.toLocaleString())} یورو` : `€${g.price.toLocaleString()}`;
 
-  const pick = (id: string, c = 0) => { const ng = garments.find((x) => x.id === id)!; setWardrobe({ ...outfit }); setGid(id); setColorIdx(c); };
+  const pick = (id: string, c = 0) => { const ng = garments.find((x) => x.id === id)!; setWardrobe({ ...outfit }); setWearIds({ ...wearIds, [g.layer]: gid, [ng.layer]: id }); setGid(id); setColorIdx(c); };
   const saveLook = () => {
     const looks = JSON.parse(localStorage.getItem("looks") || "[]");
-    looks.push({ outfit, garment: gid, size, body, at: Date.now() });
+    looks.push({ outfit, ids, garment: gid, size, body, at: Date.now() });
     localStorage.setItem("looks", JSON.stringify(looks)); setSavedCount(looks.length); setToast(t.saved);
   };
   const tryIdea = (idea: Record<Layer, [string, number]>) => {
     const o: Outfit = {};
     (Object.keys(idea) as Layer[]).forEach((l) => { const [id, c] = idea[l]; const gg = garments.find((x) => x.id === id); if (gg) o[l] = gg.colors[c]!.hex; });
-    setWardrobe(o); const [tid, tc] = idea.top; setGid(tid); setColorIdx(tc);
+    const ids: Partial<Record<Layer, string>> = {};
+    (Object.keys(idea) as Layer[]).forEach((l) => { if (idea[l][0]) ids[l] = idea[l][0]; });
+    setWearIds(ids); setWardrobe(o); const [tid, tc] = idea.top; setGid(tid); setColorIdx(tc);
   };
 
   const btn = "rounded-full border border-border px-3 py-1.5 text-xs transition-all hover:border-primary hover:text-primary active:scale-95";
@@ -134,19 +153,25 @@ function FittingRoom() {
           <div className="flex justify-center gap-2 p-4">
             {(["front", "back", "side"] as View[]).map((v) => <button key={v} onClick={() => setView(v)} className={`${btn} ${view === v ? on : ""}`}>{t[v]}</button>)}
           </div>
-          <div className="relative flex h-[420px] items-end justify-center gap-6 overflow-hidden sm:h-[520px]" style={{ perspective: 800 }}>
-            <div className="ring-floor absolute bottom-4 left-1/2 h-24 w-80 -translate-x-1/2 rounded-[50%]" />
-            {(compare ? [rec.best.size, size] : [size]).map((s, i) => (
-              <div key={i} className="relative z-10 flex h-full flex-col items-center pb-8">
-                {compare && <span className="mb-1 text-[10px] uppercase tracking-widest text-primary">{i === 0 ? t.recommended : t.selected}: {s}</span>}
-                <div className={`h-full origin-bottom transition-transform duration-500 ${zoom ? "scale-125" : ""} ${rotating ? "animate-spin-y" : ""}`}>
-                  <Mannequin body={body} outfit={outfit} view={view} />
-                </div>
+          <div className="relative h-[440px] touch-none sm:h-[540px]">
+            <ClientOnly fallback={<div className="grid h-full place-items-center text-xs text-muted-foreground">…</div>}>
+              <Suspense fallback={<div className="grid h-full place-items-center text-xs text-muted-foreground">…</div>}>
+                <FittingStage figures={figures} view={view} zoom={zoom} autoRotate={rotating} />
+              </Suspense>
+            </ClientOnly>
+            {compare && (
+              <div className="pointer-events-none absolute inset-x-0 top-1 flex justify-around text-[10px] uppercase tracking-widest text-primary" dir="ltr">
+                <span>{t.recommended}: {rec.best.size}</span><span>{t.selected}: {size}</span>
               </div>
-            ))}
+            )}
+            {fitMap && (
+              <div className="pointer-events-none absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-3 rounded-full glass px-3 py-1.5 text-[11px]">
+                {(["tight", "perfect", "loose"] as FitStatus[]).map((st) => <span key={st} className="flex items-center gap-1"><span className={`h-2 w-2 rounded-full ${statusCls[st]}`} />{t[st]}</span>)}
+              </div>
+            )}
           </div>
-          <div className="m-3 grid grid-cols-4 gap-1 rounded-2xl glass p-1.5">
-            {[[RotateCw, t.rotate, rotating, () => setRotating(!rotating)], [ZoomIn, t.zoom, zoom, () => setZoom(!zoom)], [Columns2, t.compare, compare, () => setCompare(!compare)], [Bookmark, t.save, false, saveLook]].map(([Icon, label, active, fn]: any) => (
+          <div className="m-3 grid grid-cols-5 gap-1 rounded-2xl glass p-1.5">
+            {[[RotateCw, t.rotate, rotating, () => setRotating(!rotating)], [ZoomIn, t.zoom, zoom, () => setZoom(!zoom)], [Columns2, t.compare, compare, () => setCompare(!compare)], [Layers, t.fitMap, fitMap, () => setFitMap(!fitMap)], [Bookmark, t.save, false, saveLook]].map(([Icon, label, active, fn]: any) => (
               <button key={label} onClick={fn} className={`flex flex-col items-center gap-1 rounded-xl py-2 text-[11px] transition-all hover:text-primary ${active ? "bg-accent text-primary" : "text-muted-foreground"}`}><Icon className="h-4 w-4" />{label}</button>
             ))}
           </div>
@@ -190,6 +215,7 @@ function FittingRoom() {
           const o: Outfit = {};
           pieces.forEach((p) => { const gg = garments.find((x) => x.id === p.id); if (gg) o[p.layer as Layer] = gg.colors[p.colorIndex]!.hex; });
           setWardrobe(o);
+          setWearIds(Object.fromEntries(pieces.map((p) => [p.layer, p.id])));
           const first = pieces[0]!; setGid(first.id); setColorIdx(first.colorIndex); setSize(first.size as Size);
           window.scrollTo({ top: 0, behavior: "smooth" });
         }} />
