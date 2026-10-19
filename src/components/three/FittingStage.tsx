@@ -50,14 +50,14 @@ function CameraRig({ view, zoom, height, wide }: { view: View; zoom: boolean; he
   return null;
 }
 
-function GoldRing({ x }: { x: number }) {
+function GoldRing({ pos }: { pos: [number, number, number] }) {
   const ref = useRef<THREE.Mesh>(null);
   useFrame(({ clock }) => {
     const m = ref.current?.material as THREE.MeshBasicMaterial | undefined;
     if (m) m.opacity = 0.75 + Math.sin(clock.elapsedTime * 1.6) * 0.2;
   });
   return (
-    <group position={[x, 0.003, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+    <group position={[pos[0], 0.003, pos[2]]} rotation={[-Math.PI / 2, 0, 0]}>
       <mesh ref={ref}>
         <ringGeometry args={[0.36, 0.375, 96]} />
         <meshBasicMaterial color={GOLD} transparent toneMapped={false} />
@@ -69,6 +69,9 @@ function GoldRing({ x }: { x: number }) {
     </group>
   );
 }
+
+/** Side-by-side figures are laid out across the camera's view so Compare works from any angle. */
+const offset = (x: number, view: View): [number, number, number] => [Math.cos(AZIMUTH[view]) * x, 0, -Math.sin(AZIMUTH[view]) * x];
 
 export default function FittingStage({ figures, view, zoom, autoRotate, Model = ParametricMannequin }: Props) {
   const spacing = 0.6;
@@ -85,7 +88,6 @@ export default function FittingStage({ figures, view, zoom, autoRotate, Model = 
       <ambientLight intensity={0.35} />
       <directionalLight position={[2, 4, 3]} intensity={1.6} />
       <directionalLight position={[-2.5, 3, -3]} intensity={1.1} color="#f3d98b" />
-      <pointLight position={[0, 0.3, 1.2]} intensity={0.6} color={GOLD} distance={3} />
       <Environment resolution={64}>
         <Lightformer intensity={2} position={[0, 5, 0]} scale={[10, 10, 1]} rotation-x={Math.PI / 2} />
         <Lightformer intensity={1.2} color="#f5e9d6" position={[-4, 1.5, 2]} rotation-y={Math.PI / 3} scale={[3, 6, 1]} />
@@ -94,18 +96,19 @@ export default function FittingStage({ figures, view, zoom, autoRotate, Model = 
 
       {figures.map((f, i) => {
         const x = (i - (figures.length - 1) / 2) * spacing;
+        const pos = offset(x, view);
         const { key, ...props } = f;
         return (
-          <group key={key} position={[x, 0, 0]}>
+          <group key={key} position={pos}>
             <Model {...props} />
           </group>
         );
       })}
-      {figures.map((f, i) => <GoldRing key={f.key} x={(i - (figures.length - 1) / 2) * spacing} />)}
+      {figures.map((f, i) => <GoldRing key={f.key} pos={offset((i - (figures.length - 1) / 2) * spacing, view)} />)}
 
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.001, 0]}>
         <circleGeometry args={[4, 48]} />
-        <meshStandardMaterial color="#111111" roughness={0.35} metalness={0.2} />
+        <meshStandardMaterial color="#111111" roughness={0.85} metalness={0.1} />
       </mesh>
       <ContactShadows position={[0, 0.002, 0]} opacity={0.65} scale={4} blur={2.4} far={2} resolution={256} color="#000000" />
 

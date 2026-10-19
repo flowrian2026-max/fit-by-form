@@ -3,7 +3,7 @@ import * as THREE from "three";
 import type { Body, Zone, FitStatus } from "@/lib/fit";
 import type { MannequinModelProps, LayerSpec } from "./types";
 
-const SKIN = new THREE.Color("#d9cfc0");
+const SKIN = new THREE.Color("#8f8a84");
 export const FIT_COLORS: Record<FitStatus, THREE.Color> = {
   perfect: new THREE.Color("#3ccf7a"),
   tight: new THREE.Color("#f2a531"),
