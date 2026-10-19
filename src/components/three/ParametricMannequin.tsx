@@ -124,13 +124,13 @@ function Garment({ spec, p, ghost }: { spec: LayerSpec; p: P; ghost: boolean }) 
       default:
         return {};
     }
-  }, [spec.shape, rB, rW, rH, p, L, neck0(p)]);
+  }, [spec.shape, rB, rW, rH, p, L]);
 
   if (spec.shape === "pump") {
     return (
       <group>
         {[-1, 1].map((sx) => (
-          <mesh key={sx} position={[sx * p.rH * 0.45, 0.025, 0.04 * p.s]} castShadow>
+          <mesh key={sx} position={[sx * p.rH * 0.45, 0.025, 0.04 * p.s]} rotation={[Math.PI / 2, 0, 0]} castShadow>
             <capsuleGeometry args={[0.03 * p.s, 0.1 * p.s, 4, 10]} />
             <GarmentMaterial spec={spec} ghost={ghost} />
           </mesh>
@@ -152,7 +152,6 @@ function Garment({ spec, p, ghost }: { spec: LayerSpec; p: P; ghost: boolean }) 
     </group>
   );
 }
-const neck0 = (p: P) => p.s;
 
 export function ParametricMannequin({ body, layers, fitMap, fit }: MannequinModelProps) {
   const p = useMemo(() => proportions(body), [body.height, body.bust, body.waist, body.hips]); // eslint-disable-line react-hooks/exhaustive-deps
