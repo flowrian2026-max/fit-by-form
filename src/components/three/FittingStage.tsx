@@ -108,7 +108,7 @@ export default function FittingStage({ figures, view, zoom, autoRotate, Model = 
 
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.001, 0]}>
         <circleGeometry args={[4, 48]} />
-        <meshStandardMaterial color="#111111" roughness={0.85} metalness={0.1} />
+        <meshStandardMaterial color="#0a0a0a" roughness={0.9} metalness={0.1} />
       </mesh>
       <ContactShadows position={[0, 0.002, 0]} opacity={0.65} scale={4} blur={2.4} far={2} resolution={256} color="#000000" />
 

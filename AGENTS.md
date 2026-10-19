@@ -9,6 +9,6 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Fitting room is frontend-only: garments/size charts live in src/data/*.json and fit logic in src/lib/fit.ts (pure, tested) — no database; the only server code is the AI stylist (src/lib/ai), which computes sizes with fit.ts so the model never picks sizes.
-- Mannequin rendering is isolated in src/components/Mannequin.tsx with props (body, outfit, view) so a GLB/3D renderer can replace it without touching the page.
+- Fitting room is frontend-only: garments/size charts live in src/data/*.json and fit logic in src/lib/fit.ts (pure, tested) — no database, no network calls; the stylist is rule-based in src/lib/stylist.ts and takes sizes from fit.ts.
+- The 3D stage (src/components/three/FittingStage.tsx, client-only via lazy + ClientOnly) renders any model implementing MannequinModelProps (types.ts); ParametricMannequin is the default, so a GLB model can be swapped in via the Model prop. The SVG Mannequin.tsx is kept only for small thumbnails.
 - UI strings live in src/lib/i18n.ts per language; the page wrapper sets dir=rtl for Persian.
