@@ -73,7 +73,7 @@ const statusWeightColor = (y: number, p: P, fit: Partial<Record<Zone, FitStatus>
 function useBodyGeometry(p: P, fitMap: boolean, fit: Partial<Record<Zone, FitStatus>>) {
   const torso = useMemo(() => lathe(torsoKeys(p, p.rB, p.rW, p.rH), false, 48), [p]);
   useMemo(() => {
-    const pos = torso.attributes.position!;
+    const pos = torso.attributes["position"]!;
     const colors = new Float32Array(pos.count * 3);
     for (let i = 0; i < pos.count; i++) {
       const c = fitMap ? statusWeightColor(pos.getY(i), p, fit) : SKIN;
