@@ -40,10 +40,12 @@ export const Route = createFileRoute("/")({
   component: FittingRoom,
 });
 
+const TOMAN_PER_EUR = 60000;
 const statusCls: Record<FitStatus, string> = { tight: "bg-warning", perfect: "bg-success", loose: "bg-info" };
 
 function FittingRoom() {
   const [lang, setLang] = useState<Lang>("en");
+  const [cur, setCur] = useState<"eur" | "toman">("eur");
   const t = dict[lang];
   const n = (v: string | number) => (lang === "fa" ? toFaDigits(v) : String(v));
   const [gid, setGid] = useState(garments[0]!.id);
@@ -66,7 +68,8 @@ function FittingRoom() {
   useEffect(() => { if (toast) { const id = setTimeout(() => setToast(""), 2000); return () => clearTimeout(id); } return undefined; }, [toast]);
 
   const rec = useMemo(() => recommend(g.chart, body), [g, body]);
-  const current = evaluateSize(g.chart, size, body);
+  const current = rec.best;
+  useEffect(() => setSize(rec.best.size), [rec.best.size, gid]);
   const outfit: Outfit = { ...wardrobe, [g.layer]: g.colors[colorIdx]!.hex };
   const ids = { ...wearIds, [g.layer]: gid };
   const layersFor = (currentSize: Size): LayerSpec[] =>
@@ -79,7 +82,8 @@ function FittingRoom() {
     });
   const fitOf = (s: Size) => Object.fromEntries(evaluateSize(g.chart, s, body).zones.map((z) => [z.zone, z.status]));
   const figures: StageFigure[] = (compare ? [rec.best.size, size] : [size]).map((s, i) => ({ key: `${i}`, body, layers: layersFor(s), fitMap, fit: fitOf(s) }));
-  const price = lang === "fa" ? `${toFaDigits(g.price.toLocaleString())} یورو` : `€${g.price.toLocaleString()}`;
+  const amount = cur === "eur" ? g.price : g.price * TOMAN_PER_EUR;
+  const price = `${n(amount.toLocaleString("en-US"))} ${t[cur]}`;
 
   const pick = (id: string, c = 0) => { const ng = garments.find((x) => x.id === id)!; setWardrobe({ ...outfit }); setWearIds({ ...wearIds, [g.layer]: gid, [ng.layer]: id }); setGid(id); setColorIdx(c); };
   const saveLook = () => {
@@ -99,24 +103,25 @@ function FittingRoom() {
   const on = "border-primary bg-primary text-primary-foreground gold-glow hover:text-primary-foreground";
 
   return (
-    <div dir={lang === "fa" ? "rtl" : "ltr"} lang={lang} className="min-h-screen bg-background text-foreground">
+    <div dir={lang === "fa" ? "rtl" : "ltr"} lang={lang} className="min-h-screen overflow-x-hidden bg-background text-foreground">
       <header className="sticky top-0 z-20 glass border-x-0 border-t-0">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
+        <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-3">
           <div className="min-w-0">
             <p className="truncate font-display text-lg tracking-[0.2em] text-primary">{t.brand}</p>
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{t.subtitle}</p>
           </div>
           <div className="flex shrink-0 items-center gap-2">
+            <button onClick={() => setCur(cur === "eur" ? "toman" : "eur")} className={btn}>{t[cur]}</button>
             <button onClick={() => setLang(lang === "en" ? "fa" : "en")} className={btn + " flex items-center gap-1"}><Globe className="h-3.5 w-3.5" />{lang === "en" ? "فارسی" : "English"}</button>
-            <span className="flex items-center gap-1 rounded-full border border-primary/40 px-3 py-1.5 text-xs text-primary"><ShoppingBag className="h-3.5 w-3.5" />{n(cart)}</span>
+            <span className="flex items-center gap-1 rounded-full border border-primary/40 px-2.5 py-1.5 text-xs text-primary"><ShoppingBag className="h-3.5 w-3.5" />{n(cart)}</span>
           </div>
         </div>
       </header>
 
       <main className="mx-auto grid max-w-7xl gap-5 px-4 py-6 lg:grid-cols-[300px_1fr_320px]">
         {/* Product */}
-        <section className="order-2 space-y-4 rounded-3xl bg-card p-5 lg:order-1">
-          <div className="flex gap-2 overflow-x-auto pb-1">
+        <section className="order-2 min-w-0 space-y-4 rounded-3xl bg-card p-5 lg:order-1">
+          <div className="flex flex-wrap gap-2">
             {garments.map((x) => (
               <button key={x.id} onClick={() => pick(x.id)} className={`${btn} shrink-0 ${x.id === gid ? on : ""}`}>{t[x.layer]}·{x.name[lang].split(" ").slice(-1)}</button>
             ))}
@@ -149,7 +154,7 @@ function FittingRoom() {
         </section>
 
         {/* Stage */}
-        <section className="order-1 flex flex-col overflow-hidden rounded-3xl stage-bg lg:order-2">
+        <section className="order-1 flex min-w-0 flex-col overflow-hidden rounded-3xl stage-bg lg:order-2">
           <div className="flex justify-center gap-2 p-4">
             {(["front", "back", "side"] as View[]).map((v) => <button key={v} onClick={() => setView(v)} className={`${btn} ${view === v ? on : ""}`}>{t[v]}</button>)}
           </div>
@@ -178,7 +183,7 @@ function FittingRoom() {
         </section>
 
         {/* Measurements + fit */}
-        <section className="order-3 space-y-5">
+        <section className="order-3 min-w-0 space-y-5">
           <div className="rounded-3xl bg-card p-5">
             <h2 className="mb-4 font-display text-lg">{t.measurements}</h2>
             {([["height", 145, 200, "cm"], ["weight", 40, 120, "kg"], ["bust", 70, 120, "cm"], ["waist", 55, 110, "cm"], ["hips", 75, 130, "cm"]] as const).map(([k, min, max, u]) => (
@@ -196,12 +201,12 @@ function FittingRoom() {
                 <div className="text-end"><p className="text-xs text-muted-foreground">{t.confidence}</p><p className="text-2xl">{n(rec.confidence)}{lang === "fa" ? "٪" : "%"}</p></div>
               </div>
               <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full bg-primary transition-all duration-500" style={{ width: `${rec.confidence}%` }} /></div>
-              <p className="mt-4 mb-2 text-xs text-muted-foreground">{t.size} {size}</p>
+              <p className="mt-4 mb-2 text-xs text-muted-foreground">{t.size} {rec.best.size}</p>
               <ul className="space-y-2">
                 {current.zones.map((z) => (
                   <li key={z.zone} className="flex items-center justify-between rounded-xl bg-secondary px-3 py-2 text-sm">
                     <span>{t[z.zone]}</span>
-                    <span className="flex items-center gap-2 text-xs"><span className="text-muted-foreground">{z.ease > 0 ? "+" : ""}{n(z.ease)} cm</span><span className={`h-2 w-2 rounded-full ${statusCls[z.status]}`} />{t[z.status]}</span>
+                    <span className="flex items-center gap-2 text-xs"><span className="text-muted-foreground">{n(z.range[0])}–{n(z.range[1])} · {z.diff === 0 ? t.exact : `${z.diff > 0 ? "+" : "−"}${n(Math.abs(z.diff))} cm ${z.diff > 0 ? t.roomy : t.snug}`}</span><span className={`h-2 w-2 rounded-full ${statusCls[z.status]}`} />{t[z.status]}</span>
                   </li>
                 ))}
               </ul>
