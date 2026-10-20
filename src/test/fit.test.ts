@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { zoneStatus, recommend, type SizeChart } from "@/lib/fit";
+import { zoneStatus, recommend, zoneConfidence, type SizeChart } from "@/lib/fit";
 
 const chart: SizeChart = {
   XS: { bust: 84, waist: 68, hips: 90 },
@@ -16,15 +16,20 @@ describe("fit engine", () => {
     expect(zoneStatus(8)).toBe("perfect");
   });
   it("ease over 8cm is loose", () => expect(zoneStatus(8.1)).toBe("loose"));
-  it("recommends the best scoring size", () => {
-    const r = recommend(chart, { height: 168, weight: 60, bust: 89, waist: 72, hips: 95 });
-    expect(r.best.size).toBe("M");
+  it("recommends the smallest size where every measurement fits", () => {
+    // fits both S (ease 2–3) and M (ease 7–8): smallest wins
+    const r = recommend(chart, { height: 168, weight: 60, bust: 87, waist: 71, hips: 92 });
+    expect(r.best.size).toBe("S");
+  });
+  it("headline and details come from the same size", () => {
+    const r = recommend(chart, { height: 165, weight: 62, bust: 89, waist: 72, hips: 95 });
+    expect(r.best.zones.every((z) => z.status === "perfect")).toBe(true);
+    expect(r.confidence).toBe(r.best.confidence);
   });
 });
 
-import { fitConfidence } from "@/lib/fit";
 describe("confidence", () => {
-  it("is 100% when every zone has the ideal 5cm ease", () => expect(fitConfidence([5, 5, 5])).toBe(100));
-  it("drops with distance from ideal ease", () => expect(fitConfidence([10])).toBe(50));
-  it("is 0% when 10cm or more from ideal", () => expect(fitConfidence([-5])).toBe(0));
+  it("is 100% at the centre of the range", () => expect(zoneConfidence(89, 94)).toBe(1));
+  it("is 50% at the edge of the range", () => expect(zoneConfidence(92, 94)).toBe(0.5));
+  it("is 0% one half-width outside the range", () => expect(zoneConfidence(95, 94)).toBe(0));
 });
