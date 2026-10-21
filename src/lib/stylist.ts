@@ -7,7 +7,7 @@ type Garment = { id: string; layer: Layer; price: number; tags: string[]; colors
 const garments = garmentsData as unknown as Garment[];
 
 export type Occasion = "formal" | "work" | "casual";
-export type StylistPiece = { id: string; layer: Layer; colorIndex: number; size: Size; confidence: number | null; price: number };
+export type StylistPiece = { id: string; layer: Layer; colorIndex: number; size: Size; hasSize: boolean; price: number };
 export type StylistResult = { title: string; rationale: string; pieces: StylistPiece[]; total: number; overBudget: boolean };
 
 const has = (text: string, words: string[]) => words.some((w) => text.includes(w));
@@ -38,9 +38,10 @@ const TITLES: Record<Lang, Record<Occasion, string>> = {
   fa: { formal: "شکوه شبانه", work: "استایل رسمی کاری", casual: "راحتی بی‌تکلف" },
 };
 
-export function styleOutfit(input: { occasion: string; style: string; budget: number; body: Body; lang: Lang }): StylistResult {
+export function styleOutfit(input: { occasion: string; style: string; budget: number; body: Body; lang: Lang; budgetLabel?: string }): StylistResult {
   const { occasion, cold } = classifyOccasion(input.occasion);
-  const score = (g: Garment) => (g.tags.includes(occasion) ? 1000 : 0) + (recommend(g.chart, input.body).confidence ?? 50);
+  const fitScore = (g: Garment) => { const r = recommend(g.chart, input.body); return r.status === "ok" ? 100 : r.status === "outside" ? 50 - r.best.penalty : 50; };
+  const score = (g: Garment) => (g.tags.includes(occasion) ? 1000 : 0) + fitScore(g);
   const best = (layer: Layer) => garments.filter((g) => g.layer === layer).sort((a, b) => score(b) - score(a))[0];
 
   let chosen: Garment[] = [best("top")!, best("bottom")!];
@@ -60,13 +61,13 @@ export function styleOutfit(input: { occasion: string; style: string; budget: nu
 
   const pieces: StylistPiece[] = chosen.map((g) => {
     const r = recommend(g.chart, input.body);
-    return { id: g.id, layer: g.layer, colorIndex: pickColor(g, input.style), size: r.best.size, confidence: r.confidence, price: g.price };
+    return { id: g.id, layer: g.layer, colorIndex: pickColor(g, input.style), size: r.best.size, hasSize: r.status === "ok" || r.status === "outside", price: g.price };
   });
-  const confs = pieces.map((p) => p.confidence).filter((c): c is number => c !== null);
-  const avg = confs.length ? Math.round(confs.reduce((a, b) => a + b, 0) / confs.length) : 0;
   const sum = total();
+  const b = input.budgetLabel ?? `€${input.budget}`;
   const rationale = input.lang === "fa"
-    ? `این ست برای موقعیت «${TITLES.fa[occasion]}»${cold ? " و هوای سرد" : ""} با بودجه ${input.budget} یورو انتخاب شد. سایزها بر اساس اندازه‌های شما با میانگین اطمینان ${avg}٪ تعیین شده‌اند.`
-    : `Picked for a ${occasion} occasion${cold ? " in cooler weather" : ""} within €${input.budget}. Sizes come from your measurements with ${avg}% average fit confidence.`;
+    ? `این ست بر اساس قوانین ساده برای موقعیت «${TITLES.fa[occasion]}»${cold ? " و هوای سرد" : ""} با بودجه ${b} انتخاب شد. سایزها از جدول سایز هر محصول و اندازه‌های شما تخمین زده شده‌اند.`
+    : `Picked by simple rules for a ${occasion} occasion${cold ? " in cooler weather" : ""} within ${b}. Sizes are estimated from each product's size chart and your measurements.`;
+
   return { title: TITLES[input.lang][occasion], rationale, pieces, total: sum, overBudget: sum > input.budget };
 }
