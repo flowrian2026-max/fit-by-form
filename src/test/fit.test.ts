@@ -23,16 +23,27 @@ describe("fit engine", () => {
     expect(r.best.size).toBe("S");
   });
   it("bust 89 in 86–92 and waist 72 in 70–76 are both within range", () => {
-    expect(zoneFit("bust", 89, 94)).toMatchObject({ range: [86, 92], offset: 0, status: "perfect" });
-    expect(zoneFit("waist", 72, 78)).toMatchObject({ range: [70, 76], offset: 0, status: "perfect" });
+    expect(zoneFit("bust", 89, 94)).toMatchObject({
+      range: [86, 92],
+      offset: 0,
+      status: "perfect",
+    });
+    expect(zoneFit("waist", 72, 78)).toMatchObject({
+      range: [70, 76],
+      offset: 0,
+      status: "perfect",
+    });
   });
-  it("above the range is tight by the cm over the top edge", () => expect(zoneFit("bust", 95, 94)).toMatchObject({ offset: 3, status: "tight" }));
-  it("below the range is roomy by the cm under the bottom edge", () => expect(zoneFit("bust", 83, 94)).toMatchObject({ offset: -3, status: "loose" }));
+  it("above the range is tight by the cm over the top edge", () =>
+    expect(zoneFit("bust", 95, 94)).toMatchObject({ offset: 3, status: "tight" }));
+  it("below the range is roomy by the cm under the bottom edge", () =>
+    expect(zoneFit("bust", 83, 94)).toMatchObject({ offset: -3, status: "loose" }));
   it("headline and details come from the same size", () => {
     const r = recommend(chart, body);
     expect(r.all.find((s) => s.size === r.best.size)).toEqual(r.best);
   });
-  it("reports outside when no size fits", () => expect(recommend(chart, { ...body, bust: 150 }).status).toBe("outside"));
+  it("reports outside when no size fits", () =>
+    expect(recommend(chart, { ...body, bust: 150 }).status).toBe("outside"));
   it("reports noChart for a product without bust/waist/hips data", () =>
     expect(recommend({ XS: {}, S: {}, M: {}, L: {}, XL: {} }, body).status).toBe("noChart"));
   it("reports invalid measurements", () => {

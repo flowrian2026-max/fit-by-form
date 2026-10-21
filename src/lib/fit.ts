@@ -38,11 +38,18 @@ export type SizeFit = { size: Size; fits: boolean; penalty: number; zones: ZoneF
 export function zoneFit(zone: Zone, body: number, garment: number): ZoneFit {
   const range = bodyRange(garment);
   const offset = body > range[1] ? body - range[1] : body < range[0] ? body - range[0] : 0;
-  return { zone, range, offset: Math.round(offset * 10) / 10, status: offset > 0 ? "tight" : offset < 0 ? "loose" : "perfect" };
+  return {
+    zone,
+    range,
+    offset: Math.round(offset * 10) / 10,
+    status: offset > 0 ? "tight" : offset < 0 ? "loose" : "perfect",
+  };
 }
 
 export function evaluateSize(chart: SizeChart, size: Size, body: Body): SizeFit {
-  const zones = ZONES.filter((z) => chart[size]?.[z] !== undefined).map((z) => zoneFit(z, body[z], chart[size][z] as number));
+  const zones = ZONES.filter((z) => chart[size]?.[z] !== undefined).map((z) =>
+    zoneFit(z, body[z], chart[size][z] as number),
+  );
   return {
     size,
     zones,
@@ -67,7 +74,8 @@ export type Recommendation = {
 export function recommend(chart: SizeChart | undefined, body: Partial<Body>): Recommendation {
   const zones = ZONES.filter((z) => SIZES.some((s) => chart?.[s]?.[z] !== undefined));
   const empty = (size: Size): SizeFit => ({ size, fits: false, penalty: 0, zones: [] });
-  if (!chart || !zones.length) return { status: "noChart", best: empty("M"), all: [], zones, invalid: [] };
+  if (!chart || !zones.length)
+    return { status: "noChart", best: empty("M"), all: [], zones, invalid: [] };
   const invalid = zones.filter((z) => {
     const v = body[z];
     return typeof v !== "number" || !Number.isFinite(v) || v < VALID_RANGE[0] || v > VALID_RANGE[1];
