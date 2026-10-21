@@ -20,13 +20,35 @@ type Props = {
   Model?: ComponentType<MannequinModelProps>;
 };
 
-function CameraRig({ view, zoom, height, wide }: { view: View; zoom: boolean; height: number; wide: boolean }) {
-  const { camera, controls } = useThree() as unknown as { camera: THREE.PerspectiveCamera; controls: { target: THREE.Vector3; update: () => void; addEventListener: (e: string, f: () => void) => void; removeEventListener: (e: string, f: () => void) => void } | null };
+function CameraRig({
+  view,
+  zoom,
+  height,
+  wide,
+}: {
+  view: View;
+  zoom: boolean;
+  height: number;
+  wide: boolean;
+}) {
+  const { camera, controls } = useThree() as unknown as {
+    camera: THREE.PerspectiveCamera;
+    controls: {
+      target: THREE.Vector3;
+      update: () => void;
+      addEventListener: (e: string, f: () => void) => void;
+      removeEventListener: (e: string, f: () => void) => void;
+    } | null;
+  };
   const animating = useRef(true);
-  useEffect(() => { animating.current = true; }, [view, zoom, height, wide]);
+  useEffect(() => {
+    animating.current = true;
+  }, [view, zoom, height, wide]);
   useEffect(() => {
     if (!controls) return;
-    const stop = () => { animating.current = false; };
+    const stop = () => {
+      animating.current = false;
+    };
     controls.addEventListener("start", stop);
     return () => controls.removeEventListener("start", stop);
   }, [controls]);
@@ -71,9 +93,19 @@ function GoldRing({ pos }: { pos: [number, number, number] }) {
 }
 
 /** Side-by-side figures are laid out across the camera's view so Compare works from any angle. */
-const offset = (x: number, view: View): [number, number, number] => [Math.cos(AZIMUTH[view]) * x, 0, -Math.sin(AZIMUTH[view]) * x];
+const offset = (x: number, view: View): [number, number, number] => [
+  Math.cos(AZIMUTH[view]) * x,
+  0,
+  -Math.sin(AZIMUTH[view]) * x,
+];
 
-export default function FittingStage({ figures, view, zoom, autoRotate, Model = ParametricMannequin }: Props) {
+export default function FittingStage({
+  figures,
+  view,
+  zoom,
+  autoRotate,
+  Model = ParametricMannequin,
+}: Props) {
   const spacing = 0.6;
   const height = Math.max(...figures.map((f) => f.body.height)) / 100;
   const wide = figures.length > 1;
@@ -89,9 +121,26 @@ export default function FittingStage({ figures, view, zoom, autoRotate, Model = 
       <directionalLight position={[2, 4, 3]} intensity={1.6} />
       <directionalLight position={[-2.5, 3, -3]} intensity={1.1} color="#f3d98b" />
       <Environment resolution={64}>
-        <Lightformer intensity={2} position={[0, 5, 0]} scale={[10, 10, 1]} rotation-x={Math.PI / 2} />
-        <Lightformer intensity={1.2} color="#f5e9d6" position={[-4, 1.5, 2]} rotation-y={Math.PI / 3} scale={[3, 6, 1]} />
-        <Lightformer intensity={0.8} color="#D4AF37" position={[4, 1, -2]} rotation-y={-Math.PI / 2} scale={[3, 6, 1]} />
+        <Lightformer
+          intensity={2}
+          position={[0, 5, 0]}
+          scale={[10, 10, 1]}
+          rotation-x={Math.PI / 2}
+        />
+        <Lightformer
+          intensity={1.2}
+          color="#f5e9d6"
+          position={[-4, 1.5, 2]}
+          rotation-y={Math.PI / 3}
+          scale={[3, 6, 1]}
+        />
+        <Lightformer
+          intensity={0.8}
+          color="#D4AF37"
+          position={[4, 1, -2]}
+          rotation-y={-Math.PI / 2}
+          scale={[3, 6, 1]}
+        />
       </Environment>
 
       {figures.map((f, i) => {
@@ -104,18 +153,35 @@ export default function FittingStage({ figures, view, zoom, autoRotate, Model = 
           </group>
         );
       })}
-      {figures.map((f, i) => <GoldRing key={f.key} pos={offset((i - (figures.length - 1) / 2) * spacing, view)} />)}
+      {figures.map((f, i) => (
+        <GoldRing key={f.key} pos={offset((i - (figures.length - 1) / 2) * spacing, view)} />
+      ))}
 
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.001, 0]}>
         <circleGeometry args={[4, 48]} />
         <meshStandardMaterial color="#0a0a0a" roughness={0.9} metalness={0.1} />
       </mesh>
-      <ContactShadows position={[0, 0.002, 0]} opacity={0.65} scale={4} blur={2.4} far={2} resolution={256} color="#000000" />
+      <ContactShadows
+        position={[0, 0.002, 0]}
+        opacity={0.65}
+        scale={4}
+        blur={2.4}
+        far={2}
+        resolution={256}
+        color="#000000"
+      />
 
       <OrbitControls
-        makeDefault enablePan={false} autoRotate={autoRotate} autoRotateSpeed={1.6}
-        minDistance={0.9} maxDistance={6} minPolarAngle={0.3} maxPolarAngle={Math.PI / 1.95}
-        enableDamping dampingFactor={0.08}
+        makeDefault
+        enablePan={false}
+        autoRotate={autoRotate}
+        autoRotateSpeed={1.6}
+        minDistance={0.9}
+        maxDistance={6}
+        minPolarAngle={0.3}
+        maxPolarAngle={Math.PI / 1.95}
+        enableDamping
+        dampingFactor={0.08}
       />
       <CameraRig view={view} zoom={zoom} height={height} wide={wide} />
     </Canvas>
