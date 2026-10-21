@@ -9,7 +9,7 @@ import garmentsData from "@/data/garments.json";
 import { Mannequin, type View, type Outfit } from "@/components/Mannequin";
 import { recommend, evaluateSize, SIZES, type Body, type Size, type SizeChart, type FitStatus } from "@/lib/fit";
 import { AiStylist } from "@/components/AiStylist";
-import { dict, toFaDigits, type Lang } from "@/lib/i18n";
+import { dict, toFaDigits, formatPrice, type Currency, type Lang } from "@/lib/i18n";
 
 type Layer = "top" | "bottom" | "outer" | "shoes";
 type Garment = { id: string; layer: Layer; shape: GarmentShape; name: Record<Lang, string>; price: number; colors: { name: string; hex: string }[]; chart: SizeChart };
@@ -40,12 +40,11 @@ export const Route = createFileRoute("/")({
   component: FittingRoom,
 });
 
-const TOMAN_PER_EUR = 60000;
 const statusCls: Record<FitStatus, string> = { tight: "bg-warning", perfect: "bg-success", loose: "bg-info" };
 
 function FittingRoom() {
   const [lang, setLang] = useState<Lang>("en");
-  const [cur, setCur] = useState<"eur" | "toman">("eur");
+  const [cur, setCur] = useState<Currency>("eur");
   const t = dict[lang];
   const n = (v: string | number) => (lang === "fa" ? toFaDigits(v) : String(v));
   const [gid, setGid] = useState(garments[0]!.id);
@@ -82,8 +81,7 @@ function FittingRoom() {
     });
   const fitOf = (s: Size) => Object.fromEntries(evaluateSize(g.chart, s, body).zones.map((z) => [z.zone, z.status]));
   const figures: StageFigure[] = (compare ? [rec.best.size, size] : [size]).map((s, i) => ({ key: `${i}`, body, layers: layersFor(s), fitMap, fit: fitOf(s) }));
-  const amount = cur === "eur" ? g.price : g.price * TOMAN_PER_EUR;
-  const price = `${n(amount.toLocaleString("en-US"))} ${t[cur]}`;
+  const price = formatPrice(g.price, cur, lang);
 
   const pick = (id: string, c = 0) => { const ng = garments.find((x) => x.id === id)!; setWardrobe({ ...outfit }); setWearIds({ ...wearIds, [g.layer]: gid, [ng.layer]: id }); setGid(id); setColorIdx(c); };
   const saveLook = () => {
@@ -127,7 +125,7 @@ function FittingRoom() {
             ))}
           </div>
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-primary">{t[g.layer]}</p>
+            <p className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-widest text-primary">{t[g.layer]}<span className="rounded-full border border-warning/60 px-2 py-0.5 text-warning" title={t.demoNote}>{t.demo}</span></p>
             <h1 className="mt-1 font-display text-2xl">{g.name[lang]}</h1>
             <p className="mt-2 text-xl text-primary">{price}</p>
           </div>
@@ -145,7 +143,7 @@ function FittingRoom() {
             <div className="grid grid-cols-5 gap-2">
               {SIZES.map((s) => (
                 <button key={s} onClick={() => setSize(s)} className={`relative rounded-xl border border-border py-2 text-sm transition-all hover:border-primary ${s === size ? on : ""}`}>
-                  {s}{rec.confidence && s === rec.best.size && <span className="absolute -top-1 end-1 h-1.5 w-1.5 rounded-full bg-success" />}
+                  {s}{(rec.status === "ok" || rec.status === "outside") && s === rec.best.size && <span className="absolute -top-1 end-1 h-1.5 w-1.5 rounded-full bg-success" />}
                 </button>
               ))}
             </div>
@@ -164,6 +162,7 @@ function FittingRoom() {
                 <FittingStage figures={figures} view={view} zoom={zoom} autoRotate={rotating} />
               </Suspense>
             </ClientOnly>
+            <span className="pointer-events-none absolute start-3 top-2 rounded-full border border-warning/60 px-2 py-0.5 text-[10px] uppercase tracking-widest text-warning">{t.stageDemo}</span>
             {compare && (
               <div className="pointer-events-none absolute inset-x-0 top-1 flex justify-around text-[10px] uppercase tracking-widest text-primary" dir="ltr">
                 <span>{t.recommended}: {rec.best.size}</span><span>{t.selected}: {size}</span>
@@ -195,28 +194,28 @@ function FittingRoom() {
           </div>
           <div className="rounded-3xl border border-primary/30 bg-card p-5 gold-glow">
             <h2 className="mb-4 font-display text-lg">{t.fitRec}</h2>
-            {rec.confidence === null ? <p className="text-sm text-muted-foreground">{t.noFit}</p> : <>
-              <div className="flex items-end justify-between">
-                <div><p className="text-xs text-muted-foreground">{t.recommended}</p><p className="font-display text-4xl text-primary">{rec.best.size}</p></div>
-                <div className="text-end"><p className="text-xs text-muted-foreground">{t.confidence}</p><p className="text-2xl">{n(rec.confidence)}{lang === "fa" ? "٪" : "%"}</p></div>
-              </div>
-              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full bg-primary transition-all duration-500" style={{ width: `${rec.confidence}%` }} /></div>
-              <p className="mt-4 mb-2 text-xs text-muted-foreground">{t.size} {rec.best.size}</p>
+            {rec.status === "noChart" ? <p className="text-sm text-muted-foreground">{g.layer === "shoes" ? t.noFit + " " : ""}{t.noChart}</p>
+            : rec.status === "invalid" ? <p className="text-sm text-warning">{t.invalidMsg} {rec.invalid.map((z) => t[z]).join("، ")}</p> : <>
+              <p className="text-xs text-muted-foreground">{rec.status === "ok" ? t.recommended : t.closest}</p>
+              <p className="font-display text-4xl text-primary">{rec.best.size}</p>
+              {rec.status === "outside" && <p className="mt-2 text-xs text-warning">{t.outside}</p>}
+              <p className="mt-4 mb-2 text-xs text-muted-foreground">{t.rangesUsed} · {t.size} {rec.best.size}</p>
               <ul className="space-y-2">
-                {current.zones.map((z) => (
-                  <li key={z.zone} className="flex items-center justify-between rounded-xl bg-secondary px-3 py-2 text-sm">
-                    <span>{t[z.zone]}</span>
-                    <span className="flex items-center gap-2 text-xs"><span className="text-muted-foreground">{n(z.range[0])}–{n(z.range[1])} · {z.diff === 0 ? t.exact : `${z.diff > 0 ? "+" : "−"}${n(Math.abs(z.diff))} cm ${z.diff > 0 ? t.roomy : t.snug}`}</span><span className={`h-2 w-2 rounded-full ${statusCls[z.status]}`} />{t[z.status]}</span>
+                {rec.best.zones.map((z) => (
+                  <li key={z.zone} className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 rounded-xl bg-secondary px-3 py-2 text-sm">
+                    <span>{t[z.zone]} <span className="text-xs text-muted-foreground">{n(body[z.zone])} · {n(z.range[0])}–{n(z.range[1])}</span></span>
+                    <span className="flex items-center gap-2 text-xs"><span className={`h-2 w-2 rounded-full ${statusCls[z.status]}`} />{z.offset === 0 ? t.within : `${n(Math.abs(z.offset))} ${z.offset > 0 ? t.above : t.below}`}</span>
                   </li>
                 ))}
               </ul>
+              <p className="mt-3 text-[11px] italic text-muted-foreground">{t.estimate}</p>
             </>}
           </div>
         </section>
       </main>
 
       <section className="mx-auto max-w-7xl space-y-8 px-4 pb-16">
-        <AiStylist body={body} lang={lang} onApply={(pieces) => {
+        <AiStylist body={body} lang={lang} cur={cur} onApply={(pieces) => {
           const o: Outfit = {};
           pieces.forEach((p) => { const gg = garments.find((x) => x.id === p.id); if (gg) o[p.layer as Layer] = gg.colors[p.colorIndex]!.hex; });
           setWardrobe(o);

@@ -2,14 +2,14 @@ import { useState } from "react";
 import { Sparkles } from "lucide-react";
 import garmentsData from "@/data/garments.json";
 import { styleOutfit, type StylistResult, type StylistPiece } from "@/lib/stylist";
-import { dict, toFaDigits, type Lang } from "@/lib/i18n";
+import { dict, formatPrice, type Currency, type Lang } from "@/lib/i18n";
 import type { Body } from "@/lib/fit";
 
 const garments = garmentsData as unknown as { id: string; name: Record<Lang, string>; colors: { name: string; hex: string }[] }[];
 
-export function AiStylist({ body, lang, onApply }: { body: Body; lang: Lang; onApply: (pieces: StylistPiece[]) => void }) {
+export function AiStylist({ body, lang, cur, onApply }: { body: Body; lang: Lang; cur: Currency; onApply: (pieces: StylistPiece[]) => void }) {
   const t = dict[lang];
-  const n = (v: number) => (lang === "fa" ? toFaDigits(v.toLocaleString()) : `€${v.toLocaleString()}`);
+  const n = (v: number) => formatPrice(v, cur, lang);
   const [occasion, setOccasion] = useState("");
   const [style, setStyle] = useState("");
   const [budget, setBudget] = useState(2500);
@@ -21,7 +21,7 @@ export function AiStylist({ body, lang, onApply }: { body: Body; lang: Lang; onA
     if (occasion.trim().length < 2 || loading) return;
     setLoading(true); setRes(null);
     await new Promise((r) => setTimeout(r, 350));
-    setRes(styleOutfit({ occasion, style, budget, lang, body }));
+    setRes(styleOutfit({ occasion, style, budget, lang, body, budgetLabel: n(budget) }));
     setLoading(false);
   };
 
@@ -53,7 +53,7 @@ export function AiStylist({ body, lang, onApply }: { body: Body; lang: Lang; onA
                   return (
                     <li key={p.id} className="flex items-center justify-between gap-2 text-sm">
                       <span className="flex min-w-0 items-center gap-2"><span className="h-3 w-3 shrink-0 rounded-full border border-border" style={{ background: g.colors[p.colorIndex]?.hex }} /><span className="truncate">{g.name[lang]}</span></span>
-                      <span className="shrink-0 text-xs text-muted-foreground">{p.layer === "shoes" ? "" : p.size + " · "}{n(p.price)}</span>
+                      <span className="shrink-0 text-xs text-muted-foreground">{!p.hasSize ? "" : p.size + " · "}{n(p.price)}</span>
                     </li>
                   );
                 })}
