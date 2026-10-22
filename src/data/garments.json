@@ -10,15 +10,18 @@
     "colors": [
       {
         "name": "Ivory",
-        "hex": "#F5E9D6"
+        "hex": "#F5E9D6",
+        "image": null
       },
       {
         "name": "Noir",
-        "hex": "#1a1a1a"
+        "hex": "#1a1a1a",
+        "image": null
       },
       {
         "name": "Champagne",
-        "hex": "#D9C29A"
+        "hex": "#D9C29A",
+        "image": null
       }
     ],
     "chart": {
@@ -52,7 +55,27 @@
     "tags": [
       "formal",
       "work"
-    ]
+    ],
+    "category": "top",
+    "demo": true,
+    "photos": {
+      "front": null,
+      "back": null
+    },
+    "anchors": {
+      "leftShoulder": [
+        138,
+        190
+      ],
+      "rightShoulder": [
+        262,
+        190
+      ],
+      "hem": [
+        200,
+        440
+      ]
+    }
   },
   {
     "id": "wool-trouser",
@@ -65,15 +88,18 @@
     "colors": [
       {
         "name": "Charcoal",
-        "hex": "#3a3a3c"
+        "hex": "#3a3a3c",
+        "image": null
       },
       {
         "name": "Camel",
-        "hex": "#B08A5B"
+        "hex": "#B08A5B",
+        "image": null
       },
       {
         "name": "Cream",
-        "hex": "#EDE0C8"
+        "hex": "#EDE0C8",
+        "image": null
       }
     ],
     "chart": {
@@ -102,7 +128,27 @@
     "tags": [
       "work",
       "casual"
-    ]
+    ],
+    "category": "bottom",
+    "demo": true,
+    "photos": {
+      "front": null,
+      "back": null
+    },
+    "anchors": {
+      "waistLeft": [
+        160,
+        330
+      ],
+      "waistRight": [
+        240,
+        330
+      ],
+      "hem": [
+        200,
+        850
+      ]
+    }
   },
   {
     "id": "cashmere-coat",
@@ -115,15 +161,18 @@
     "colors": [
       {
         "name": "Camel",
-        "hex": "#B08A5B"
+        "hex": "#B08A5B",
+        "image": null
       },
       {
         "name": "Black",
-        "hex": "#151515"
+        "hex": "#151515",
+        "image": null
       },
       {
         "name": "Gold",
-        "hex": "#D4AF37"
+        "hex": "#D4AF37",
+        "image": null
       }
     ],
     "chart": {
@@ -158,7 +207,27 @@
       "formal",
       "work",
       "cold"
-    ]
+    ],
+    "category": "outer",
+    "demo": true,
+    "photos": {
+      "front": null,
+      "back": null
+    },
+    "anchors": {
+      "leftShoulder": [
+        138,
+        190
+      ],
+      "rightShoulder": [
+        262,
+        190
+      ],
+      "hem": [
+        200,
+        660
+      ]
+    }
   },
   {
     "id": "satin-skirt",
@@ -171,15 +240,18 @@
     "colors": [
       {
         "name": "Gold",
-        "hex": "#C9A43A"
+        "hex": "#C9A43A",
+        "image": null
       },
       {
         "name": "Wine",
-        "hex": "#5a1f2a"
+        "hex": "#5a1f2a",
+        "image": null
       },
       {
         "name": "Noir",
-        "hex": "#1a1a1a"
+        "hex": "#1a1a1a",
+        "image": null
       }
     ],
     "chart": {
@@ -207,7 +279,27 @@
     "shape": "skirt",
     "tags": [
       "formal"
-    ]
+    ],
+    "category": "bottom",
+    "demo": true,
+    "photos": {
+      "front": null,
+      "back": null
+    },
+    "anchors": {
+      "waistLeft": [
+        160,
+        330
+      ],
+      "waistRight": [
+        240,
+        330
+      ],
+      "hem": [
+        200,
+        600
+      ]
+    }
   },
   {
     "id": "knit-top",
@@ -220,15 +312,18 @@
     "colors": [
       {
         "name": "Cream",
-        "hex": "#F5E9D6"
+        "hex": "#F5E9D6",
+        "image": null
       },
       {
         "name": "Mocha",
-        "hex": "#6b4f3a"
+        "hex": "#6b4f3a",
+        "image": null
       },
       {
         "name": "Sage",
-        "hex": "#8a9a7e"
+        "hex": "#8a9a7e",
+        "image": null
       }
     ],
     "chart": {
@@ -257,7 +352,27 @@
     "tags": [
       "casual",
       "work"
-    ]
+    ],
+    "category": "top",
+    "demo": true,
+    "photos": {
+      "front": null,
+      "back": null
+    },
+    "anchors": {
+      "leftShoulder": [
+        138,
+        190
+      ],
+      "rightShoulder": [
+        262,
+        190
+      ],
+      "hem": [
+        200,
+        420
+      ]
+    }
   },
   {
     "id": "leather-pump",
@@ -270,15 +385,18 @@
     "colors": [
       {
         "name": "Black",
-        "hex": "#111111"
+        "hex": "#111111",
+        "image": null
       },
       {
         "name": "Nude",
-        "hex": "#D8B99A"
+        "hex": "#D8B99A",
+        "image": null
       },
       {
         "name": "Gold",
-        "hex": "#D4AF37"
+        "hex": "#D4AF37",
+        "image": null
       }
     ],
     "chart": {
@@ -293,6 +411,22 @@
       "formal",
       "work",
       "casual"
-    ]
+    ],
+    "category": "shoes",
+    "demo": true,
+    "photos": {
+      "front": null,
+      "back": null
+    },
+    "anchors": {
+      "leftAnkle": [
+        170,
+        850
+      ],
+      "rightAnkle": [
+        230,
+        850
+      ]
+    }
   }
 ]

@@ -1,0 +1,202 @@
+[
+  {
+    "id": "slim",
+    "defaults": {
+      "height": 168,
+      "weight": 52,
+      "bust": 80,
+      "waist": 63,
+      "hips": 86
+    },
+    "image": {
+      "front": null,
+      "back": null
+    },
+    "landmarks": {
+      "shoulders": {
+        "y": 190,
+        "hw": 56
+      },
+      "bust": {
+        "y": 250,
+        "hw": 47
+      },
+      "waist": {
+        "y": 330,
+        "hw": 36
+      },
+      "hips": {
+        "y": 410,
+        "hw": 50
+      },
+      "knees": {
+        "y": 630,
+        "hw": 36
+      },
+      "ankles": {
+        "y": 840,
+        "hw": 30
+      }
+    }
+  },
+  {
+    "id": "regular",
+    "defaults": {
+      "height": 165,
+      "weight": 62,
+      "bust": 89,
+      "waist": 72,
+      "hips": 95
+    },
+    "image": {
+      "front": null,
+      "back": null
+    },
+    "landmarks": {
+      "shoulders": {
+        "y": 190,
+        "hw": 62
+      },
+      "bust": {
+        "y": 250,
+        "hw": 52
+      },
+      "waist": {
+        "y": 330,
+        "hw": 40
+      },
+      "hips": {
+        "y": 410,
+        "hw": 56
+      },
+      "knees": {
+        "y": 630,
+        "hw": 40
+      },
+      "ankles": {
+        "y": 840,
+        "hw": 30
+      }
+    }
+  },
+  {
+    "id": "athletic",
+    "defaults": {
+      "height": 170,
+      "weight": 64,
+      "bust": 90,
+      "waist": 70,
+      "hips": 93
+    },
+    "image": {
+      "front": null,
+      "back": null
+    },
+    "landmarks": {
+      "shoulders": {
+        "y": 190,
+        "hw": 68
+      },
+      "bust": {
+        "y": 250,
+        "hw": 52
+      },
+      "waist": {
+        "y": 330,
+        "hw": 39
+      },
+      "hips": {
+        "y": 410,
+        "hw": 55
+      },
+      "knees": {
+        "y": 630,
+        "hw": 39
+      },
+      "ankles": {
+        "y": 840,
+        "hw": 30
+      }
+    }
+  },
+  {
+    "id": "curvy",
+    "defaults": {
+      "height": 163,
+      "weight": 72,
+      "bust": 100,
+      "waist": 78,
+      "hips": 106
+    },
+    "image": {
+      "front": null,
+      "back": null
+    },
+    "landmarks": {
+      "shoulders": {
+        "y": 190,
+        "hw": 63
+      },
+      "bust": {
+        "y": 250,
+        "hw": 57
+      },
+      "waist": {
+        "y": 330,
+        "hw": 43
+      },
+      "hips": {
+        "y": 410,
+        "hw": 63
+      },
+      "knees": {
+        "y": 630,
+        "hw": 45
+      },
+      "ankles": {
+        "y": 840,
+        "hw": 30
+      }
+    }
+  },
+  {
+    "id": "tall",
+    "defaults": {
+      "height": 182,
+      "weight": 66,
+      "bust": 88,
+      "waist": 70,
+      "hips": 96
+    },
+    "image": {
+      "front": null,
+      "back": null
+    },
+    "landmarks": {
+      "shoulders": {
+        "y": 190,
+        "hw": 62
+      },
+      "bust": {
+        "y": 250,
+        "hw": 51
+      },
+      "waist": {
+        "y": 330,
+        "hw": 39
+      },
+      "hips": {
+        "y": 410,
+        "hw": 56
+      },
+      "knees": {
+        "y": 630,
+        "hw": 40
+      },
+      "ankles": {
+        "y": 840,
+        "hw": 30
+      }
+    }
+  }
+]
