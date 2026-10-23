@@ -96,7 +96,7 @@ export function PhotoStage({
           {items.map(({ category, product: p, worn }) => {
             const chart = worn.size ? p.chart[worn.size] : undefined;
             const zone: Zone =
-              category === "bottom" ? "hips" : category === "shoes" ? "bust" : "bust";
+              category === "bottom" ? "waist" : "bust";
             const wf = category === "shoes" ? 1 : sizeFactor(chart?.[zone], body[zone]);
             const pl = placeGarment(category, p.anchors, lm, wf);
             if (!pl) return null;
