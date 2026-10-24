@@ -34,7 +34,7 @@ export type BodyType = {
 };
 export const bodyTypes = bodyTypesData as unknown as BodyType[];
 
-export type Worn = { id: string; colorIdx: number; size?: Size };
+export type Worn = { id: string; colorIdx: number; size?: Size | undefined };
 export type Outfit = Partial<Record<Category, Worn>>;
 
 /** One garment per slot; a dress replaces top + bottom, and a top or bottom replaces a dress. */
