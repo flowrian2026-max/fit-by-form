@@ -1,5 +1,5 @@
 import garmentsData from "@/data/garments.json";
-import { recommend, type Body, type SizeChart, type Size } from "@/lib/fit";
+import { recommend, type Body, type FitPref, type SizeChart, type Size } from "@/lib/fit";
 import type { Lang } from "@/lib/i18n";
 
 type Layer = "top" | "bottom" | "outer" | "shoes";
@@ -104,12 +104,13 @@ export function styleOutfit(input: {
   style: string;
   budget: number;
   body: Body;
+  pref?: FitPref | undefined;
   lang: Lang;
   budgetLabel?: string;
 }): StylistResult {
   const { occasion, cold } = classifyOccasion(input.occasion);
   const fitScore = (g: Garment) => {
-    const r = recommend(g.chart, input.body);
+    const r = recommend(g.chart, input.body, input.pref);
     return r.status === "ok" ? 100 : r.status === "outside" ? 50 - r.best.penalty : 50;
   };
   const score = (g: Garment) => (g.tags.includes(occasion) ? 1000 : 0) + fitScore(g);
@@ -135,7 +136,7 @@ export function styleOutfit(input: {
   }
 
   const pieces: StylistPiece[] = chosen.map((g) => {
-    const r = recommend(g.chart, input.body);
+    const r = recommend(g.chart, input.body, input.pref);
     return {
       id: g.id,
       layer: g.layer,

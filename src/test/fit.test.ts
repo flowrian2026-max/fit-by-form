@@ -52,3 +52,26 @@ describe("fit engine", () => {
     expect(r.invalid).toEqual(["waist"]);
   });
 });
+
+describe("fit preference", () => {
+  const b = { height: 168, weight: 60, bust: 87, waist: 71, hips: 92 };
+  it("regular is the default and matches the original behaviour", () => {
+    expect(recommend(chart, b).best.size).toBe("S");
+    expect(recommend(chart, b, "regular").best.size).toBe("S");
+  });
+  it("fitted keeps the snuggest size that works", () => {
+    expect(recommend(chart, b, "fitted").best.size).toBe("S");
+  });
+  it("relaxed moves toward a roomier size", () => {
+    expect(recommend(chart, b, "relaxed").best.size).toBe("M");
+  });
+  it("ease windows shift the body range the size fits", () => {
+    expect(zoneFit("bust", 87, 94, "fitted").range).toEqual([89, 94]);
+    expect(zoneFit("bust", 87, 94, "relaxed").range).toEqual([82, 89]);
+  });
+  it("lists every size that fits so the UI can say 'also fits'", () => {
+    const r = recommend(chart, { ...b, bust: 86.5, waist: 70.5, hips: 92.5 });
+    expect(r.all.filter((f) => f.fits).length).toBeGreaterThan(1);
+  });
+});
+

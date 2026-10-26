@@ -66,7 +66,41 @@ export type Anchors = Partial<
 >;
 export type Placement = { tx: number; ty: number; sx: number; sy: number; ox: number; oy: number };
 
-/** Maps a garment's anchor pair onto the matching body landmark line. */
+/**
+ * Vertical landmark lines of the reference figure that garment art and anchors are drawn on.
+ * Different body images (for example real photos) have other proportions, so heights are
+ * mapped between these lines and the body's own landmark lines.
+ */
+export const REF_Y: Record<LandmarkKey, number> = {
+  shoulders: 190,
+  bust: 250,
+  waist: 330,
+  hips: 410,
+  knees: 630,
+  ankles: 840,
+};
+
+/** Piecewise-linear map of a reference y (garment art space) onto the body's own landmark lines. */
+export function mapY(y: number, lm: Landmarks): number {
+  const ref = LANDMARK_KEYS.map((k) => REF_Y[k]);
+  const dst = LANDMARK_KEYS.map((k) => lm[k].y);
+  const last = ref.length - 1;
+  if (y <= ref[0]!) return dst[0]! + (y - ref[0]!);
+  if (y >= ref[last]!) return dst[last]! + (y - ref[last]!);
+  for (let i = 1; i <= last; i++) {
+    if (y <= ref[i]!) {
+      const t = (y - ref[i - 1]!) / (ref[i]! - ref[i - 1]!);
+      return dst[i - 1]! + t * (dst[i]! - dst[i - 1]!);
+    }
+  }
+  return y;
+}
+
+/**
+ * Maps a garment's anchor pair onto the matching body landmark line. Width follows the body's
+ * half-width at that line; length follows the hem anchor, so the hem lands where the same cut
+ * would land on this body (a trouser hem stays at the ankle even on a short-legged figure).
+ */
 export function placeGarment(
   category: "top" | "bottom" | "dress" | "outer" | "shoes",
   a: Anchors,
@@ -82,12 +116,18 @@ export function placeGarment(
   const [l, r, target] = pair;
   if (!l || !r || r[0] - l[0] <= 0) return null;
   const s = (2 * target.hw) / (r[0] - l[0]);
+  const oy = (l[1] + r[1]) / 2;
+  let sy = s;
+  if (category !== "shoes" && a.hem && a.hem[1] - oy > 1) {
+    const hemY = mapY(a.hem[1], lm);
+    sy = (hemY - target.y) / (a.hem[1] - oy);
+  }
   return {
     tx: CX,
     ty: target.y,
     sx: s * widthFactor,
-    sy: s,
+    sy,
     ox: (l[0] + r[0]) / 2,
-    oy: (l[1] + r[1]) / 2,
+    oy,
   };
 }

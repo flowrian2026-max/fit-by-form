@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { wear } from "@/lib/catalog";
 import { addItem, setQty, cartKey, cartTotal } from "@/lib/cart";
-import { bandFactors, heightScale } from "@/lib/warp";
+import { bandFactors, heightScale, mapY, placeGarment, REF_Y } from "@/lib/warp";
+import { bodyTypes, productById } from "@/lib/catalog";
 
 const base = { height: 165, weight: 62, bust: 89, waist: 72, hips: 95 };
 
@@ -33,6 +34,28 @@ describe("band warp", () => {
   });
   it("is neutral at the body type defaults", () => {
     expect(bandFactors(base, base).waist).toBe(1);
+  });
+});
+
+describe("garment placement on different bodies", () => {
+  const lm = bodyTypes[1]!.landmarks;
+  it("maps each reference landmark line onto the body's own line", () => {
+    expect(mapY(REF_Y.waist, lm)).toBe(lm.waist.y);
+    expect(mapY(REF_Y.ankles, lm)).toBe(lm.ankles.y);
+  });
+  it("keeps the order of lines so garments never fold over", () => {
+    let prev = -Infinity;
+    for (let y = 100; y <= 880; y += 20) {
+      const m = mapY(y, lm);
+      expect(m).toBeGreaterThan(prev);
+      prev = m;
+    }
+  });
+  it("lands the hem where the same cut lands on this body", () => {
+    const trouser = productById("wool-trouser")!;
+    const pl = placeGarment("bottom", trouser.anchors, lm)!;
+    const hem = pl.ty + (trouser.anchors.hem![1] - pl.oy) * pl.sy;
+    expect(Math.abs(hem - mapY(trouser.anchors.hem![1], lm))).toBeLessThan(1e-6);
   });
 });
 

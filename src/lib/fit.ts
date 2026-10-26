@@ -9,21 +9,31 @@ export type SizeChart = Record<Size, Partial<Record<Zone, number>>>;
 export const SIZES: Size[] = ["XS", "S", "M", "L", "XL"];
 export const ZONES: Zone[] = ["bust", "waist", "hips"];
 
-/** Ease window: a body fits a garment when garment − body is between MIN_EASE and MAX_EASE. */
-export const MIN_EASE = 2;
-export const MAX_EASE = 8;
+/** How snug the customer wants the garment: shifts the ease window toward smaller or larger sizes. */
+export type FitPref = "fitted" | "regular" | "relaxed";
+export const FIT_PREFS: FitPref[] = ["fitted", "regular", "relaxed"];
+/** Ease window (cm): a body fits a garment when garment − body is inside it. */
+export const EASE: Record<FitPref, [number, number]> = {
+  fitted: [0, 5],
+  regular: [2, 8],
+  relaxed: [5, 12],
+};
+export const MIN_EASE = EASE.regular[0];
+export const MAX_EASE = EASE.regular[1];
 /** Plausible body circumference (cm); anything outside is treated as invalid input. */
 export const VALID_RANGE: [number, number] = [40, 200];
 
-export function zoneStatus(ease: number): FitStatus {
-  if (ease < MIN_EASE) return "tight";
-  if (ease > MAX_EASE) return "loose";
+export function zoneStatus(ease: number, pref: FitPref = "regular"): FitStatus {
+  const [lo, hi] = EASE[pref];
+  if (ease < lo) return "tight";
+  if (ease > hi) return "loose";
   return "perfect";
 }
 
 /** Body range (cm) that a garment measurement fits. */
-export function bodyRange(garment: number): [number, number] {
-  return [garment - MAX_EASE, garment - MIN_EASE];
+export function bodyRange(garment: number, pref: FitPref = "regular"): [number, number] {
+  const [lo, hi] = EASE[pref];
+  return [garment - hi, garment - lo];
 }
 
 export type ZoneFit = {
@@ -35,8 +45,8 @@ export type ZoneFit = {
 };
 export type SizeFit = { size: Size; fits: boolean; penalty: number; zones: ZoneFit[] };
 
-export function zoneFit(zone: Zone, body: number, garment: number): ZoneFit {
-  const range = bodyRange(garment);
+export function zoneFit(zone: Zone, body: number, garment: number, pref: FitPref = "regular"): ZoneFit {
+  const range = bodyRange(garment, pref);
   const offset = body > range[1] ? body - range[1] : body < range[0] ? body - range[0] : 0;
   return {
     zone,
@@ -46,9 +56,14 @@ export function zoneFit(zone: Zone, body: number, garment: number): ZoneFit {
   };
 }
 
-export function evaluateSize(chart: SizeChart, size: Size, body: Body): SizeFit {
+export function evaluateSize(
+  chart: SizeChart,
+  size: Size,
+  body: Body,
+  pref: FitPref = "regular",
+): SizeFit {
   const zones = ZONES.filter((z) => chart[size]?.[z] !== undefined).map((z) =>
-    zoneFit(z, body[z], chart[size][z] as number),
+    zoneFit(z, body[z], chart[size][z] as number, pref),
   );
   return {
     size,
@@ -71,7 +86,11 @@ export type Recommendation = {
 };
 
 /** Single source of truth: smallest size where every measurement fits, else the closest size. */
-export function recommend(chart: SizeChart | undefined, body: Partial<Body>): Recommendation {
+export function recommend(
+  chart: SizeChart | undefined,
+  body: Partial<Body>,
+  pref: FitPref = "regular",
+): Recommendation {
   const zones = ZONES.filter((z) => SIZES.some((s) => chart?.[s]?.[z] !== undefined));
   const empty = (size: Size): SizeFit => ({ size, fits: false, penalty: 0, zones: [] });
   if (!chart || !zones.length)
@@ -81,7 +100,7 @@ export function recommend(chart: SizeChart | undefined, body: Partial<Body>): Re
     return typeof v !== "number" || !Number.isFinite(v) || v < VALID_RANGE[0] || v > VALID_RANGE[1];
   });
   if (invalid.length) return { status: "invalid", best: empty("M"), all: [], zones, invalid };
-  const all = SIZES.filter((s) => chart[s]).map((s) => evaluateSize(chart, s, body as Body));
+  const all = SIZES.filter((s) => chart[s]).map((s) => evaluateSize(chart, s, body as Body, pref));
   const fit = all.find((f) => f.fits);
   const best = fit ?? all.reduce((a, b) => (b.penalty < a.penalty ? b : a));
   return { status: fit ? "ok" : "outside", best, all, zones, invalid };

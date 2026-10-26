@@ -9,33 +9,33 @@
       "hips": 86
     },
     "image": {
-      "front": null,
+      "front": "/models/slim.webp",
       "back": null
     },
     "landmarks": {
       "shoulders": {
-        "y": 190,
-        "hw": 56
+        "y": 216,
+        "hw": 78
       },
       "bust": {
-        "y": 250,
-        "hw": 47
+        "y": 295,
+        "hw": 65
       },
       "waist": {
-        "y": 330,
-        "hw": 36
+        "y": 411,
+        "hw": 51
       },
       "hips": {
-        "y": 410,
-        "hw": 50
+        "y": 495,
+        "hw": 78
       },
       "knees": {
-        "y": 630,
-        "hw": 36
+        "y": 694,
+        "hw": 39
       },
       "ankles": {
-        "y": 840,
-        "hw": 30
+        "y": 822,
+        "hw": 52
       }
     }
   },
@@ -49,33 +49,33 @@
       "hips": 95
     },
     "image": {
-      "front": null,
+      "front": "/models/regular.webp",
       "back": null
     },
     "landmarks": {
       "shoulders": {
-        "y": 190,
-        "hw": 62
+        "y": 216,
+        "hw": 84
       },
       "bust": {
-        "y": 250,
-        "hw": 52
+        "y": 295,
+        "hw": 73
       },
       "waist": {
-        "y": 330,
-        "hw": 40
+        "y": 411,
+        "hw": 59
       },
       "hips": {
-        "y": 410,
-        "hw": 56
+        "y": 495,
+        "hw": 87
       },
       "knees": {
-        "y": 630,
-        "hw": 40
+        "y": 694,
+        "hw": 44
       },
       "ankles": {
-        "y": 840,
-        "hw": 30
+        "y": 822,
+        "hw": 52
       }
     }
   },
@@ -89,33 +89,33 @@
       "hips": 93
     },
     "image": {
-      "front": null,
+      "front": "/models/athletic.webp",
       "back": null
     },
     "landmarks": {
       "shoulders": {
-        "y": 190,
-        "hw": 68
+        "y": 216,
+        "hw": 86
       },
       "bust": {
-        "y": 250,
-        "hw": 52
+        "y": 295,
+        "hw": 72
       },
       "waist": {
-        "y": 330,
-        "hw": 39
+        "y": 411,
+        "hw": 56
       },
       "hips": {
-        "y": 410,
-        "hw": 55
+        "y": 495,
+        "hw": 83
       },
       "knees": {
-        "y": 630,
-        "hw": 39
+        "y": 694,
+        "hw": 41
       },
       "ankles": {
-        "y": 840,
-        "hw": 30
+        "y": 822,
+        "hw": 52
       }
     }
   },
@@ -129,33 +129,33 @@
       "hips": 106
     },
     "image": {
-      "front": null,
+      "front": "/models/curvy.webp",
       "back": null
     },
     "landmarks": {
       "shoulders": {
-        "y": 190,
-        "hw": 63
+        "y": 216,
+        "hw": 86
       },
       "bust": {
-        "y": 250,
-        "hw": 57
+        "y": 295,
+        "hw": 83
       },
       "waist": {
-        "y": 330,
-        "hw": 43
+        "y": 411,
+        "hw": 65
       },
       "hips": {
-        "y": 410,
-        "hw": 63
+        "y": 495,
+        "hw": 99
       },
       "knees": {
-        "y": 630,
-        "hw": 45
+        "y": 694,
+        "hw": 49
       },
       "ankles": {
-        "y": 840,
-        "hw": 30
+        "y": 822,
+        "hw": 52
       }
     }
   },
@@ -169,33 +169,33 @@
       "hips": 96
     },
     "image": {
-      "front": null,
+      "front": "/models/tall.webp",
       "back": null
     },
     "landmarks": {
       "shoulders": {
-        "y": 190,
-        "hw": 62
+        "y": 216,
+        "hw": 86
       },
       "bust": {
-        "y": 250,
-        "hw": 51
+        "y": 295,
+        "hw": 66
       },
       "waist": {
-        "y": 330,
-        "hw": 39
+        "y": 411,
+        "hw": 52
       },
       "hips": {
-        "y": 410,
-        "hw": 56
+        "y": 495,
+        "hw": 80
       },
       "knees": {
-        "y": 630,
+        "y": 694,
         "hw": 40
       },
       "ankles": {
-        "y": 840,
-        "hw": 30
+        "y": 822,
+        "hw": 52
       }
     }
   }

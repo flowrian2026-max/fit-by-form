@@ -1,7 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { RotateCw, ZoomIn, Columns2, Bookmark, ShoppingBag, Globe, Layers, X } from "lucide-react";
-import { recommend, evaluateSize, SIZES, type Body, type Size, type FitStatus, type Zone } from "@/lib/fit";
+import {
+  recommend,
+  evaluateSize,
+  SIZES,
+  FIT_PREFS,
+  type Body,
+  type FitPref,
+  type Size,
+  type FitStatus,
+  type Zone,
+} from "@/lib/fit";
 import { AiStylist } from "@/components/AiStylist";
 import { Showcase } from "@/components/Showcase";
 import { CartDrawer } from "@/components/CartDrawer";
@@ -74,6 +84,8 @@ function FittingRoom() {
   const [typeId, setTypeId] = useState<BodyType["id"]>("regular");
   const bodyType = bodyTypes.find((b) => b.id === typeId)!;
   const [body, setBody] = useState<Body>(bodyType.defaults);
+  const [pref, setPref] = useState<FitPref>("regular");
+  const [guide, setGuide] = useState(false);
   const [outfit, setOutfit] = useState<Outfit>({
     top: { id: "silk-blouse", colorIdx: 0 },
     bottom: { id: "wool-trouser", colorIdx: 0 },
@@ -111,9 +123,9 @@ function FittingRoom() {
   const recs = useMemo(
     () =>
       Object.fromEntries(
-        wornInOrder(outfit).map(({ product }) => [product.id, recommend(product.chart, body)]),
+        wornInOrder(outfit).map(({ product }) => [product.id, recommend(product.chart, body, pref)]),
       ),
-    [outfit, body],
+    [outfit, body, pref],
   );
   const sizeOf = (p: Product): Size | undefined => {
     const w = outfit[p.layer];
@@ -129,12 +141,12 @@ function FittingRoom() {
     const z: Partial<Record<Zone, FitStatus>> = {};
     items.forEach(({ product, worn }) => {
       if (!worn.size) return;
-      evaluateSize(product.chart, worn.size, body).zones.forEach((x) => {
+      evaluateSize(product.chart, worn.size, body, pref).zones.forEach((x) => {
         if (!z[x.zone] || RANK[x.status] > RANK[z[x.zone]!]) z[x.zone] = x.status;
       });
     });
     return z;
-  }, [items, body]);
+  }, [items, body, pref]);
   const hasBack = items.length > 0 && items.every((i) => i.product.photos.back) && !!bodyType.image.back;
   useEffect(() => {
     if (!hasBack) setBack(false);
@@ -411,6 +423,41 @@ function FittingRoom() {
                 <input type="range" min={min} max={max} value={body[k]} onChange={(e) => setBody({ ...body, [k]: +e.target.value })} className="w-full" />
               </label>
             ))}
+            <div className="mt-4 border-t border-border pt-4">
+              <p className="mb-2 text-xs text-muted-foreground">{t.fitPref}</p>
+              <div className="grid grid-cols-3 gap-2" role="group" aria-label={t.fitPref}>
+                {FIT_PREFS.map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    aria-pressed={pref === p}
+                    onClick={() => setPref(p)}
+                    className={`${btn} ${pref === p ? on : ""}`}
+                  >
+                    {p === "fitted" ? t.prefFitted : p === "regular" ? t.prefRegular : t.prefRelaxed}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-2 text-[11px] text-muted-foreground">{t.prefNote}</p>
+              <button
+                type="button"
+                onClick={() => setGuide(!guide)}
+                aria-expanded={guide}
+                className="mt-3 text-xs text-primary underline-offset-4 hover:underline"
+              >
+                {t.howTo}
+              </button>
+              {guide && (
+                <ul className="mt-2 space-y-1.5 rounded-xl bg-secondary p-3 text-[12px] leading-relaxed text-muted-foreground">
+                  <li>{t.measureIntro}</li>
+                  <li>{t.measureBust}</li>
+                  <li>{t.measureWaist}</li>
+                  <li>{t.measureHips}</li>
+                  <li>{t.measureHeight}</li>
+                  <li>{t.measureWeight}</li>
+                </ul>
+              )}
+            </div>
           </div>
           <div className="rounded-3xl border border-primary/30 bg-card p-5 gold-glow">
             <h2 className="mb-1 font-display text-lg">{t.fitRec}</h2>
@@ -430,6 +477,11 @@ function FittingRoom() {
               <>
                 <p className="text-xs text-muted-foreground">{fRec.status === "ok" ? t.recommended : t.closest}</p>
                 <p className="font-display text-4xl text-primary">{fRec.best.size}</p>
+                {fRec.status === "ok" && fRec.all.some((f) => f.fits && f.size !== fRec.best.size) && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {t.alsoFits}: {fRec.all.filter((f) => f.fits && f.size !== fRec.best.size).map((f) => f.size).join(", ")}
+                  </p>
+                )}
                 {fRec.status === "outside" && <p className="mt-2 text-xs text-warning">{t.outside}</p>}
                 <p className="mt-4 mb-2 text-xs text-muted-foreground">
                   {t.rangesUsed} · {t.size} {fRec.best.size}
@@ -461,6 +513,7 @@ function FittingRoom() {
         <Showcase lang={lang} cur={cur} outfit={outfit} onWear={wearProduct} />
         <AiStylist
           body={body}
+          pref={pref}
           lang={lang}
           cur={cur}
           onApply={(pieces) => {
@@ -478,7 +531,7 @@ function FittingRoom() {
           <h2 className="mb-3 font-display text-xl">{t.outfits}</h2>
           <div className="grid gap-4 sm:grid-cols-3">
             {ideas.map((idea, i) => {
-              const its = wornInOrder(idea).map((x) => ({ ...x, worn: { ...x.worn, size: recommend(x.product.chart, body).best.size } }));
+              const its = wornInOrder(idea).map((x) => ({ ...x, worn: { ...x.worn, size: recommend(x.product.chart, body, pref).best.size } }));
               return (
                 <div key={i} className="flex min-w-0 items-center gap-3 rounded-2xl bg-card p-3">
                   <div className="h-36 w-20 shrink-0">

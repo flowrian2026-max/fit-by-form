@@ -3,7 +3,7 @@ import { Sparkles } from "lucide-react";
 import garmentsData from "@/data/garments.json";
 import { styleOutfit, type StylistResult, type StylistPiece } from "@/lib/stylist";
 import { dict, formatPrice, type Currency, type Lang } from "@/lib/i18n";
-import type { Body } from "@/lib/fit";
+import type { Body, FitPref } from "@/lib/fit";
 
 const garments = garmentsData as unknown as {
   id: string;
@@ -13,11 +13,13 @@ const garments = garmentsData as unknown as {
 
 export function AiStylist({
   body,
+  pref,
   lang,
   cur,
   onApply,
 }: {
   body: Body;
+  pref?: FitPref;
   lang: Lang;
   cur: Currency;
   onApply: (pieces: StylistPiece[]) => void;
@@ -36,7 +38,7 @@ export function AiStylist({
     setLoading(true);
     setRes(null);
     await new Promise((r) => setTimeout(r, 350));
-    setRes(styleOutfit({ occasion, style, budget, lang, body, budgetLabel: n(budget) }));
+    setRes(styleOutfit({ occasion, style, budget, lang, body, pref, budgetLabel: n(budget) }));
     setLoading(false);
   };
 
