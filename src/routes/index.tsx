@@ -431,7 +431,15 @@ function FittingRoom() {
                     key={p}
                     type="button"
                     aria-pressed={pref === p}
-                    onClick={() => setPref(p)}
+                    onClick={() => {
+                      setPref(p);
+                      // a new preference should show its own recommendation, so drop manual size picks
+                      setOutfit((o) =>
+                        Object.fromEntries(
+                          Object.entries(o).map(([k, w]) => [k, w ? { ...w, size: undefined } : w]),
+                        ) as Outfit,
+                      );
+                    }}
                     className={`${btn} ${pref === p ? on : ""}`}
                   >
                     {p === "fitted" ? t.prefFitted : p === "regular" ? t.prefRegular : t.prefRelaxed}

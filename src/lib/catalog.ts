@@ -21,6 +21,8 @@ export type Product = {
   tags: string[];
   demo: boolean;
   photos: { front: string | null; back: string | null };
+  /** Small cut-out for the showcase card. */
+  thumb?: string | null;
   anchors: Anchors;
 };
 export const products = garmentsData as unknown as Product[];

@@ -5,7 +5,7 @@ import { garmentPath } from "@/components/stage/standins";
 
 function Thumb({ p }: { p: Product }) {
   const c = p.colors[0]!;
-  const img = c.image ?? p.photos.front;
+  const img = c.image ?? p.thumb ?? p.photos.front;
   if (img) return <img src={img} alt="" className="h-full w-full object-contain" loading="lazy" />;
   const box: Record<string, string> = {
     pump: "150 830 100 50",

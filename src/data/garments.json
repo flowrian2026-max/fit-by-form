@@ -12,16 +12,6 @@
         "name": "Ivory",
         "hex": "#F5E9D6",
         "image": null
-      },
-      {
-        "name": "Noir",
-        "hex": "#1a1a1a",
-        "image": null
-      },
-      {
-        "name": "Champagne",
-        "hex": "#D9C29A",
-        "image": null
       }
     ],
     "chart": {
@@ -59,23 +49,24 @@
     "category": "top",
     "demo": true,
     "photos": {
-      "front": null,
+      "front": "/garments/silk-blouse.webp",
       "back": null
     },
     "anchors": {
       "leftShoulder": [
-        138,
-        190
+        109.8,
+        153.3
       ],
       "rightShoulder": [
-        262,
-        190
+        290.2,
+        153.3
       ],
       "hem": [
         200,
-        440
+        427.3
       ]
-    }
+    },
+    "thumb": "/garments/thumb-silk-blouse.webp"
   },
   {
     "id": "wool-trouser",
@@ -89,16 +80,6 @@
       {
         "name": "Charcoal",
         "hex": "#3a3a3c",
-        "image": null
-      },
-      {
-        "name": "Camel",
-        "hex": "#B08A5B",
-        "image": null
-      },
-      {
-        "name": "Cream",
-        "hex": "#EDE0C8",
         "image": null
       }
     ],
@@ -132,23 +113,24 @@
     "category": "bottom",
     "demo": true,
     "photos": {
-      "front": null,
+      "front": "/garments/wool-trouser.webp",
       "back": null
     },
     "anchors": {
       "waistLeft": [
-        160,
-        330
+        144.2,
+        388.8
       ],
       "waistRight": [
-        240,
-        330
+        255.8,
+        388.8
       ],
       "hem": [
         200,
-        850
+        851.7
       ]
-    }
+    },
+    "thumb": "/garments/thumb-wool-trouser.webp"
   },
   {
     "id": "cashmere-coat",
@@ -162,16 +144,6 @@
       {
         "name": "Camel",
         "hex": "#B08A5B",
-        "image": null
-      },
-      {
-        "name": "Black",
-        "hex": "#151515",
-        "image": null
-      },
-      {
-        "name": "Gold",
-        "hex": "#D4AF37",
         "image": null
       }
     ],
@@ -211,23 +183,24 @@
     "category": "outer",
     "demo": true,
     "photos": {
-      "front": null,
+      "front": "/garments/cashmere-coat.webp",
       "back": null
     },
     "anchors": {
       "leftShoulder": [
-        138,
-        190
+        109.8,
+        209.3
       ],
       "rightShoulder": [
-        262,
-        190
+        290.2,
+        209.3
       ],
       "hem": [
         200,
-        660
+        713.3
       ]
-    }
+    },
+    "thumb": "/garments/thumb-cashmere-coat.webp"
   },
   {
     "id": "satin-skirt",
@@ -239,18 +212,8 @@
     "price": 340,
     "colors": [
       {
-        "name": "Gold",
-        "hex": "#C9A43A",
-        "image": null
-      },
-      {
-        "name": "Wine",
-        "hex": "#5a1f2a",
-        "image": null
-      },
-      {
-        "name": "Noir",
-        "hex": "#1a1a1a",
+        "name": "Champagne",
+        "hex": "#E9D9B8",
         "image": null
       }
     ],
@@ -283,23 +246,24 @@
     "category": "bottom",
     "demo": true,
     "photos": {
-      "front": null,
+      "front": "/garments/satin-skirt.webp",
       "back": null
     },
     "anchors": {
       "waistLeft": [
-        160,
-        330
+        144.2,
+        325.1
       ],
       "waistRight": [
-        240,
-        330
+        255.8,
+        325.1
       ],
       "hem": [
         200,
-        600
+        666.0
       ]
-    }
+    },
+    "thumb": "/garments/thumb-satin-skirt.webp"
   },
   {
     "id": "knit-top",
@@ -312,17 +276,7 @@
     "colors": [
       {
         "name": "Cream",
-        "hex": "#F5E9D6",
-        "image": null
-      },
-      {
-        "name": "Mocha",
-        "hex": "#6b4f3a",
-        "image": null
-      },
-      {
-        "name": "Sage",
-        "hex": "#8a9a7e",
+        "hex": "#EFE6CF",
         "image": null
       }
     ],
@@ -356,23 +310,24 @@
     "category": "top",
     "demo": true,
     "photos": {
-      "front": null,
+      "front": "/garments/knit-top.webp",
       "back": null
     },
     "anchors": {
       "leftShoulder": [
-        138,
-        190
+        109.8,
+        152.6
       ],
       "rightShoulder": [
-        262,
-        190
+        290.2,
+        152.6
       ],
       "hem": [
         200,
-        420
+        421.6
       ]
-    }
+    },
+    "thumb": "/garments/thumb-knit-top.webp"
   },
   {
     "id": "leather-pump",
