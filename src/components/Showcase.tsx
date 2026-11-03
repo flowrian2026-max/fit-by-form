@@ -3,7 +3,7 @@ import { CATEGORIES, products, type Category, type Outfit, type Product } from "
 import { dict, formatPrice, type Currency, type Lang } from "@/lib/i18n";
 import { garmentPath } from "@/components/stage/standins";
 
-function Thumb({ p }: { p: Product }) {
+export function Thumb({ p }: { p: Product }) {
   const c = p.colors[0]!;
   const img = c.image ?? p.thumb ?? p.photos.front;
   if (img) return <img src={img} alt="" className="h-full w-full object-contain" loading="lazy" />;
