@@ -40,7 +40,7 @@ export function PhotoStage({
   items: StageItem[];
   view?: "front" | "back";
   zoom?: boolean;
-  fit?: Partial<Record<Zone, FitStatus>>;
+  fit?: Partial<Record<Zone, FitStatus>> | undefined;
   className?: string;
 }) {
   const uid = useId().replace(/:/g, "");
