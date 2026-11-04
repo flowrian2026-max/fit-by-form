@@ -110,7 +110,7 @@ function FittingRoom() {
     bottom: { id: "satin-skirt", colorIdx: 0 },
   });
   const [focus, setFocus] = useState<Category>("top");
-  const [cat, setCat] = useState<Category>("dress");
+  const [cat, setCat] = useState<Category>("top");
   const [back, setBack] = useState(false);
   const [zoom, setZoom] = useState(false);
   const [compare, setCompare] = useState(false);
