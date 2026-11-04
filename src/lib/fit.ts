@@ -16,7 +16,7 @@ export const FIT_PREFS: FitPref[] = ["fitted", "regular", "relaxed"];
 export const EASE: Record<FitPref, [number, number]> = {
   fitted: [0, 5],
   regular: [2, 8],
-  relaxed: [5, 12],
+  relaxed: [6, 12],
 };
 export const MIN_EASE = EASE.regular[0];
 export const MAX_EASE = EASE.regular[1];

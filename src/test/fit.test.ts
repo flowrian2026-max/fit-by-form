@@ -65,9 +65,9 @@ describe("fit preference", () => {
   it("relaxed moves toward a roomier size", () => {
     expect(recommend(chart, b, "relaxed").best.size).toBe("M");
   });
-  it("ease windows shift the body range the size fits", () => {
+  it("ease windows (fitted 0–5, regular 2–8, relaxed 6–12) shift the body range the size fits", () => {
     expect(zoneFit("bust", 87, 94, "fitted").range).toEqual([89, 94]);
-    expect(zoneFit("bust", 87, 94, "relaxed").range).toEqual([82, 89]);
+    expect(zoneFit("bust", 87, 94, "relaxed").range).toEqual([82, 88]);
   });
   it("lists every size that fits so the UI can say 'also fits'", () => {
     const r = recommend(chart, { ...b, bust: 86.5, waist: 70.5, hips: 92.5 });
