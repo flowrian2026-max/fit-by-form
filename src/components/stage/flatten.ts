@@ -7,7 +7,14 @@ import type { Placement } from "@/lib/warp";
  */
 export type FlatLayer =
   | { t: "img"; href: string; m?: Placement | undefined }
-  | { t: "path"; d: string[]; fill: string; opacity?: number; shade?: boolean; m?: Placement | undefined }
+  | {
+      t: "path";
+      d: string[];
+      fill: string;
+      opacity?: number;
+      shade?: boolean;
+      m?: Placement | undefined;
+    }
   | { t: "ellipse"; cx: number; cy: number; rx: number; ry: number; fill: string; opacity: number };
 
 const W = 400;
@@ -30,8 +37,10 @@ const loadImg = (src: string) => {
 
 /** Canvas can't read CSS variables: swap var(--x) for its computed value. */
 const resolve = (c: string) =>
-  c.replace(/var\((--[\w-]+)\)/g, (_, v: string) =>
-    getComputedStyle(document.documentElement).getPropertyValue(v).trim() || "#999",
+  c.replace(
+    /var\((--[\w-]+)\)/g,
+    (_, v: string) =>
+      getComputedStyle(document.documentElement).getPropertyValue(v).trim() || "#999",
   );
 
 export async function flatten(layers: FlatLayer[]): Promise<string> {

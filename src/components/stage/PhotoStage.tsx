@@ -69,7 +69,15 @@ export function PhotoStage({
     }
     if (fit)
       for (const z of Object.keys(fit) as Zone[])
-        out.push({ t: "ellipse", cx: CX, cy: lm[z].y, rx: lm[z].hw + 6, ry: 20, fill: FIT_COLOR[fit[z]!], opacity: 0.55 });
+        out.push({
+          t: "ellipse",
+          cx: CX,
+          cy: lm[z].y,
+          rx: lm[z].hw + 6,
+          ry: 20,
+          fill: FIT_COLOR[fit[z]!],
+          opacity: 0.55,
+        });
     for (const { category, product: p, worn } of items) {
       const chart = worn.size ? p.chart[worn.size] : undefined;
       const zone: Zone = category === "bottom" ? "waist" : "bust";
@@ -81,7 +89,14 @@ export function PhotoStage({
       out.push(
         photo
           ? { t: "img", href: photo, m }
-          : { t: "path", d: garmentPath(p.shape), fill: color.hex, opacity: category === "outer" ? 0.96 : 1, shade: true, m },
+          : {
+              t: "path",
+              d: garmentPath(p.shape),
+              fill: color.hex,
+              opacity: category === "outer" ? 0.96 : 1,
+              shade: true,
+              m,
+            },
       );
     }
     return out;
@@ -124,15 +139,31 @@ export function PhotoStage({
                   y="0"
                   width="400"
                   height="900"
-                  transform={l.m ? `translate(${l.m.tx} ${l.m.ty}) scale(${l.m.sx} ${l.m.sy}) translate(${-l.m.ox} ${-l.m.oy})` : undefined}
+                  transform={
+                    l.m
+                      ? `translate(${l.m.tx} ${l.m.ty}) scale(${l.m.sx} ${l.m.sy}) translate(${-l.m.ox} ${-l.m.oy})`
+                      : undefined
+                  }
                 />
               ) : l.t === "ellipse" ? (
-                <ellipse key={i} cx={l.cx} cy={l.cy} rx={l.rx} ry={l.ry} fill={l.fill} opacity={l.opacity} />
+                <ellipse
+                  key={i}
+                  cx={l.cx}
+                  cy={l.cy}
+                  rx={l.rx}
+                  ry={l.ry}
+                  fill={l.fill}
+                  opacity={l.opacity}
+                />
               ) : (
                 <g
                   key={i}
                   opacity={l.opacity ?? 1}
-                  transform={l.m ? `translate(${l.m.tx} ${l.m.ty}) scale(${l.m.sx} ${l.m.sy}) translate(${-l.m.ox} ${-l.m.oy})` : undefined}
+                  transform={
+                    l.m
+                      ? `translate(${l.m.tx} ${l.m.ty}) scale(${l.m.sx} ${l.m.sy}) translate(${-l.m.ox} ${-l.m.oy})`
+                      : undefined
+                  }
                 >
                   {l.d.map((d) => (
                     <path key={d} d={d} fill={l.fill} />
@@ -148,14 +179,29 @@ export function PhotoStage({
           </clipPath>
         ))}
       </defs>
-      <ellipse cx={CX} cy={FEET_Y + 4} rx="110" ry="16" fill="none" stroke="var(--primary)" strokeOpacity="0.7" className="ring-pulse" />
+      <ellipse
+        cx={CX}
+        cy={FEET_Y + 4}
+        rx="110"
+        ry="16"
+        fill="none"
+        stroke="var(--primary)"
+        strokeOpacity="0.7"
+        className="ring-pulse"
+      />
       <ellipse cx={CX} cy={FEET_Y + 4} rx="140" ry="22" fill="var(--primary)" opacity="0.06" />
       <g transform={`translate(${CX} ${FEET_Y}) scale(${hs}) translate(${-CX} ${-FEET_Y})`}>
         {/* backing copy at the average band width: any anti-aliased band edge shows the same figure */}
-        <use href={`#fig${uid}`} transform={`translate(${CX} 0) scale(${avgS} 1) translate(${-CX} 0)`} />
+        <use
+          href={`#fig${uid}`}
+          transform={`translate(${CX} 0) scale(${avgS} 1) translate(${-CX} 0)`}
+        />
         {bandS.map((s, i) => (
           <g key={i} clipPath={`url(#b${uid}-${i})`}>
-            <use href={`#fig${uid}`} transform={`translate(${CX} 0) scale(${s} 1) translate(${-CX} 0)`} />
+            <use
+              href={`#fig${uid}`}
+              transform={`translate(${CX} 0) scale(${s} 1) translate(${-CX} 0)`}
+            />
           </g>
         ))}
       </g>
