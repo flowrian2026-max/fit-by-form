@@ -50,6 +50,8 @@ export function PhotoStage({
   const fig = figurePaths(lm);
   const bodyImg = bodyType.image[view];
   const bandH = (FEET_Y + 2 - TOP) / BANDS;
+  const bandS = Array.from({ length: BANDS }, (_, i) => factorAt(TOP + (i + 0.5) * bandH, lm, f));
+  const avgS = bandS.reduce((a, b) => a + b, 0) / BANDS;
 
   return (
     <svg
@@ -129,8 +131,13 @@ export function PhotoStage({
       <ellipse cx={CX} cy={FEET_Y + 4} rx="110" ry="16" fill="none" stroke="var(--primary)" strokeOpacity="0.7" className="ring-pulse" />
       <ellipse cx={CX} cy={FEET_Y + 4} rx="140" ry="22" fill="var(--primary)" opacity="0.06" />
       <g transform={`translate(${CX} ${FEET_Y}) scale(${hs}) translate(${-CX} ${-FEET_Y})`}>
+        {/* backing copy at the average band width: hides hairline seams Chrome leaves between clipped image bands */}
+        <use
+          href={`#fig${uid}`}
+          transform={`translate(${CX} 0) scale(${avgS} 1) translate(${-CX} 0)`}
+        />
         {Array.from({ length: BANDS }, (_, i) => {
-          const s = factorAt(TOP + (i + 0.5) * bandH, lm, f);
+          const s = bandS[i]!;
           return (
             <g key={i} clipPath={`url(#b${uid}-${i})`}>
               <use
