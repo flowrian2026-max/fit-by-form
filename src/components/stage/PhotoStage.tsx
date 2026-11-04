@@ -121,7 +121,7 @@ export function PhotoStage({
         </g>
         {Array.from({ length: BANDS }, (_, i) => (
           <clipPath key={i} id={`b${uid}-${i}`}>
-            <rect x="0" y={TOP + i * bandH - 0.4} width="400" height={bandH + 0.8} />
+            <rect x="0" y={TOP + i * bandH} width="400" height={bandH} shapeRendering="crispEdges" />
           </clipPath>
         ))}
       </defs>
